@@ -9,6 +9,7 @@
 - 支持按穴位中文名、拼音或代码搜索，并可按所属经络筛选结果。
 - 穴位可加入本机收藏，收藏列表通过 `shared_preferences` 在应用重启后保留。
 - 使用 `AnimationController` + `CustomPainter` 绘制循环流动粒子；可暂停、重置、调速和切换流动方向。
+- 经络详情页：单经流动演示（正/背面切换、暂停、反向）、说明与出处、相关穴位列表；点选穴位返回首页并定位。可从「查看经络详情」或穴位卡片进入。
 - 穴位示例支持点选并展示名称、拼音、国际代码、定位提示和资料状态。
 - 所有数据由 `assets/data/*.json` 本地加载，预留来源字段。
 
@@ -53,7 +54,7 @@ bash tool/bootstrap_platforms.sh   # 首次运行：生成 Android/iOS 原生目
 flutter run
 ```
 
-初始化脚本会在临时目录生成 Flutter 原生模板，只把 `android/`、`ios/` 复制到当前工程，不覆盖 Dart 源码或项目配置；如平台目录已经存在，脚本会停止以避免覆盖。也可在已有原生目录的项目中直接执行 `flutter pub get` 和 `flutter run`。此工作环境当前没有 `flutter` / `dart` 可执行文件，因此源码尚未在这里完成设备构建或运行验证。首版只依赖 Flutter SDK，无额外 pub package。
+初始化脚本会在临时目录生成 Flutter 原生模板，只把 `android/`、`ios/` 复制到当前工程，不覆盖 Dart 源码或项目配置；如平台目录已经存在，脚本会停止以避免覆盖。也可在已有原生目录的项目中直接执行 `flutter pub get` 和 `flutter run`。已用 Flutter 3.24.5 通过 `flutter analyze` 与 `flutter test`（`test/` 下的组件测试），尚未做真机构建验证。首版只依赖 Flutter SDK，无额外 pub package。
 
 ## 目录
 

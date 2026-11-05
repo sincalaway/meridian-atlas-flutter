@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/meridian_repository.dart';
 import 'models/meridian.dart';
+import 'pages/meridian_detail_page.dart';
 import 'widgets/acupoint_search_panel.dart';
 import 'widgets/meridian_canvas.dart';
 
@@ -192,6 +193,22 @@ class _MeridianHomePageState extends State<MeridianHomePage>
     });
   }
 
+  Future<void> _openMeridianDetail(Meridian meridian) async {
+    HapticFeedback.selectionClick();
+    final picked = await Navigator.of(context).push<Acupoint>(
+      MaterialPageRoute(
+        builder: (_) => MeridianDetailPage(
+          meridian: meridian,
+          acupoints: widget.acupoints,
+          favoriteIds: _favoritePointIds,
+          initialView: _view,
+        ),
+      ),
+    );
+    if (!mounted || picked == null) return;
+    _selectSearchResult(picked);
+  }
+
   void _setSpeed(double value) {
     setState(() => _speed = value);
     _flowController.duration = Duration(milliseconds: (4200 / value).round());
@@ -308,6 +325,10 @@ class _MeridianHomePageState extends State<MeridianHomePage>
               _buildGroupPicker(),
               const SizedBox(height: 12),
               _buildMeridianChips(),
+              if (selected.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                _buildDetailShortcuts(selected),
+              ],
               const SizedBox(height: 16),
               if (_activePoint != null) _buildPointCard(_activePoint!),
               if (_activePoint == null) _buildHintCard(),
@@ -575,6 +596,31 @@ class _MeridianHomePageState extends State<MeridianHomePage>
     );
   }
 
+  Widget _buildDetailShortcuts(List<Meridian> selected) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('查看经络详情', style: TextStyle(fontSize: 11, color: Colors.white.withOpacity(0.5))),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: selected.map((meridian) {
+            return ActionChip(
+              onPressed: () => _openMeridianDetail(meridian),
+              avatar: Icon(Icons.menu_book_rounded, size: 14, color: meridian.color),
+              label: Text(meridian.nameZh),
+              labelStyle: const TextStyle(fontSize: 11, color: Color(0xFFD5E2DD)),
+              backgroundColor: const Color(0xFF141F22),
+              side: BorderSide(color: meridian.color.withOpacity(0.45)),
+              visualDensity: VisualDensity.compact,
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
   Widget _buildPointCard(Acupoint point) {
     final meridian = widget.meridians.firstWhere((item) => item.id == point.meridianId);
     return Container(
@@ -624,6 +670,16 @@ class _MeridianHomePageState extends State<MeridianHomePage>
           Text(point.location, style: const TextStyle(fontSize: 12, height: 1.55, color: Color(0xFFD0DAD5))),
           const SizedBox(height: 10),
           Text('资料状态：${point.source}', style: TextStyle(fontSize: 10, height: 1.45, color: Colors.white.withOpacity(0.44))),
+          const SizedBox(height: 6),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: () => _openMeridianDetail(meridian),
+              icon: const Icon(Icons.menu_book_rounded, size: 15),
+              label: Text('查看${meridian.nameZh}详情', style: const TextStyle(fontSize: 12)),
+              style: TextButton.styleFrom(foregroundColor: meridian.color, padding: EdgeInsets.zero, visualDensity: VisualDensity.compact),
+            ),
+          ),
         ],
       ),
     );
