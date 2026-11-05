@@ -2,7 +2,7 @@
 """用 AcuAtlas 开放数据补全本草典未收录的穴位，追加到 assets/data/acupoints.json。
 
 数据来源：AcuAtlas，https://acupointatlas.com/atlas ，许可 CC BY 4.0。
-原文为英文；tool/acuatlas_zh.json 是本项目的中文译文（AI 辅助翻译，待人工核对），
+原文为英文；tool/acuatlas_zh.json 是本项目的中文译文（AI 辅助翻译，2026-11-06 已对照英文逐条修订），
 同样以 CC BY 4.0 提供，并注明改动。
 
 用法（须在 import_bencaodian.py 之后运行）：
@@ -82,7 +82,7 @@ def main():
             "specialCategories": tr["categories"],
             "cautions": tr["cautions"],
             "source": (
-                "AcuAtlas 开放数据（acupointatlas.com，CC BY 4.0），英文原文由本项目 AI 辅助译为中文，待人工核对；"
+                "AcuAtlas 开放数据（acupointatlas.com，CC BY 4.0），英文原文由本项目译为中文（AI 辅助翻译，2026-11-06 对照英文逐条修订）；"
                 "AcuAtlas 定位以 WHO《西太平洋地区标准针灸穴位定位》（2008）为准。"
                 "图上位置为按穴序沿示意路径排布，非真实定位。"
             ),

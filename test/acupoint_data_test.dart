@@ -21,10 +21,7 @@ void main() {
       expect(meridianIds, contains(p.meridianId), reason: p.code);
       expect(p.x, inInclusiveRange(0, 1000), reason: p.code);
       expect(p.y, inInclusiveRange(0, 1600), reason: p.code);
-      // 乳中（ST17）原文仅作定位标志，没有功效。
-      if (!p.specialCategories.contains('仅作定位标志')) {
-        expect(p.efficacyTags, isNotEmpty, reason: p.code);
-      }
+      expect(p.efficacyTags, isNotEmpty, reason: p.code);
       expect(p.source, anyOf(contains('CC BY-SA 4.0'), contains('CC BY 4.0')), reason: p.code);
     }
     // 本草典 208 穴 + AcuAtlas 补全 153 穴
