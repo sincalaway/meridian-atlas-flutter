@@ -18,6 +18,9 @@ class AcupointSearchPanel extends StatelessWidget {
     required this.favoritesReady,
     required this.onFavoriteToggle,
     required this.onPointSelected,
+    this.selectedEfficacyTags = const {},
+    this.onEfficacyTagToggled,
+    this.onEfficacyTagsCleared,
   });
 
   static const _allMeridians = 'all';
@@ -36,6 +39,35 @@ class AcupointSearchPanel extends StatelessWidget {
   final ValueChanged<Acupoint> onFavoriteToggle;
   final ValueChanged<Acupoint> onPointSelected;
 
+  /// 当前选中的功效标签；穴位只要命中其中任意一个即保留（OR）。
+  final Set<String> selectedEfficacyTags;
+  final ValueChanged<String>? onEfficacyTagToggled;
+  final VoidCallback? onEfficacyTagsCleared;
+
+  /// 数据中出现过的全部功效标签，按出现次数降序、再按字典序。
+  static List<String> availableEfficacyTags(List<Acupoint> points) {
+    final counts = <String, int>{};
+    for (final point in points) {
+      for (final tag in point.efficacyTags) {
+        final trimmed = tag.trim();
+        if (trimmed.isEmpty) continue;
+        counts[trimmed] = (counts[trimmed] ?? 0) + 1;
+      }
+    }
+    final tags = counts.keys.toList()
+      ..sort((a, b) {
+        final byCount = counts[b]!.compareTo(counts[a]!);
+        return byCount != 0 ? byCount : a.compareTo(b);
+      });
+    return tags;
+  }
+
+  /// 功效筛选规则：未选标签时全部通过；否则命中任一选中标签。
+  static bool matchesEfficacy(Acupoint point, Set<String> selected) {
+    if (selected.isEmpty) return true;
+    return point.efficacyTags.any((tag) => selected.contains(tag.trim()));
+  }
+
   List<Acupoint> _matchingPoints() {
     final normalizedQuery = _normalize(query.trim());
     return points.where((point) {
@@ -44,6 +76,7 @@ class AcupointSearchPanel extends StatelessWidget {
         return false;
       }
       if (favoritesOnly && !favoriteIds.contains(point.id)) return false;
+      if (!matchesEfficacy(point, selectedEfficacyTags)) return false;
       if (normalizedQuery.isEmpty) return true;
 
       final meridian = meridians.firstWhere(
@@ -83,7 +116,8 @@ class AcupointSearchPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final shouldShowResults = query.trim().isNotEmpty ||
         favoritesOnly ||
-        selectedMeridianId != _allMeridians;
+        selectedMeridianId != _allMeridians ||
+        selectedEfficacyTags.isNotEmpty;
     final results = shouldShowResults ? _matchingPoints() : const <Acupoint>[];
 
     return Column(
@@ -181,6 +215,8 @@ class AcupointSearchPanel extends StatelessWidget {
             if (value != null) onMeridianChanged(value);
           },
         ),
+        const SizedBox(height: 10),
+        _buildEfficacyFilter(),
         if (shouldShowResults) ...[
           const SizedBox(height: 10),
           Row(
@@ -198,10 +234,67 @@ class AcupointSearchPanel extends StatelessWidget {
           if (favoritesOnly && !favoritesReady)
             _emptyState('正在读取收藏…', Icons.more_horiz_rounded)
           else if (results.isEmpty)
-            _emptyState('没有匹配的穴位，试试其他关键词或经络。', Icons.search_off_rounded)
+            _emptyState('没有匹配的穴位，试试其他关键词、经络或功效。', Icons.search_off_rounded)
           else
             ...results.map(_pointTile),
         ],
+      ],
+    );
+  }
+
+  Widget _buildEfficacyFilter() {
+    final tags = availableEfficacyTags(points);
+    final header = Row(
+      children: [
+        const Icon(Icons.local_offer_outlined, size: 15, color: Color(0xFF92A69F)),
+        const SizedBox(width: 6),
+        const Text('按功效筛选', style: TextStyle(fontSize: 11, color: Color(0xFF92A69F))),
+        const Spacer(),
+        if (selectedEfficacyTags.isNotEmpty && onEfficacyTagsCleared != null)
+          TextButton(
+            onPressed: onEfficacyTagsCleared,
+            style: TextButton.styleFrom(
+              visualDensity: VisualDensity.compact,
+              foregroundColor: const Color(0xFF9FC9BC),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+            ),
+            child: Text('清除（${selectedEfficacyTags.length}）', style: const TextStyle(fontSize: 11)),
+          ),
+      ],
+    );
+    if (tags.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          header,
+          const SizedBox(height: 6),
+          _emptyState('功效标签尚未录入。需按指定教材核对后填写穴位的 efficacyTags 字段。', Icons.edit_note_rounded),
+        ],
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        header,
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 7,
+          runSpacing: 7,
+          children: tags.map((tag) {
+            final selected = selectedEfficacyTags.contains(tag);
+            return FilterChip(
+              label: Text(tag),
+              selected: selected,
+              onSelected: onEfficacyTagToggled == null ? null : (_) => onEfficacyTagToggled!(tag),
+              labelStyle: TextStyle(fontSize: 11, color: selected ? const Color(0xFFBDECE0) : const Color(0xFFA6B4B1)),
+              selectedColor: const Color(0xFF1E3734),
+              backgroundColor: const Color(0xFF141F22),
+              side: BorderSide(color: selected ? const Color(0xFF47796D) : const Color(0xFF273539)),
+              showCheckmark: false,
+              visualDensity: VisualDensity.compact,
+            );
+          }).toList(),
+        ),
       ],
     );
   }

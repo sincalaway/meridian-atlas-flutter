@@ -1,7 +1,92 @@
 [
-  {"id":"demo-li4","nameZh":"合谷","pinyin":"Hégǔ","code":"LI4","meridianId":"LI","view":"front","coordinate":{"x":265,"y":735},"location":"示意点位：手背第一、二掌骨间区域。具体定位请以经审校教材为准。","indications":["待录入经专业审校的学习资料"],"source":"演示记录；定位坐标和功效字段尚未完成教材校勘。"},
-  {"id":"demo-lu7","nameZh":"列缺","pinyin":"Lièquē","code":"LU7","meridianId":"LU","view":"front","coordinate":{"x":290,"y":650},"location":"示意点位：前臂桡侧区域。具体定位请以经审校教材为准。","indications":["待录入经专业审校的学习资料"],"source":"演示记录；定位坐标和功效字段尚未完成教材校勘。"},
-  {"id":"demo-st36","nameZh":"足三里","pinyin":"Zúsānlǐ","code":"ST36","meridianId":"ST","view":"front","coordinate":{"x":620,"y":1160},"location":"示意点位：小腿前外侧区域。具体定位请以经审校教材为准。","indications":["待录入经专业审校的学习资料"],"source":"演示记录；定位坐标和功效字段尚未完成教材校勘。"},
-  {"id":"demo-ren12","nameZh":"中脘","pinyin":"Zhōngwǎn","code":"CV12","meridianId":"REN","view":"front","coordinate":{"x":500,"y":650},"location":"示意点位：上腹部正中区域。具体定位请以经审校教材为准。","indications":["待录入经专业审校的学习资料"],"source":"演示记录；定位坐标和功效字段尚未完成教材校勘。"},
-  {"id":"demo-du20","nameZh":"百会","pinyin":"Bǎihuì","code":"GV20","meridianId":"DU","view":"back","coordinate":{"x":500,"y":115},"location":"示意点位：头顶部区域。具体定位请以经审校教材为准。","indications":["待录入经专业审校的学习资料"],"source":"演示记录；定位坐标和功效字段尚未完成教材校勘。"}
+  {
+    "id": "demo-li4",
+    "nameZh": "合谷",
+    "pinyin": "Hégǔ",
+    "code": "LI4",
+    "meridianId": "LI",
+    "view": "front",
+    "coordinate": {
+      "x": 265,
+      "y": 735
+    },
+    "location": "示意点位：手背第一、二掌骨间区域。具体定位请以经审校教材为准。",
+    "indications": [
+      "待录入经专业审校的学习资料"
+    ],
+    "efficacyTags": [],
+    "source": "演示记录；定位坐标和功效字段尚未完成教材校勘。"
+  },
+  {
+    "id": "demo-lu7",
+    "nameZh": "列缺",
+    "pinyin": "Lièquē",
+    "code": "LU7",
+    "meridianId": "LU",
+    "view": "front",
+    "coordinate": {
+      "x": 290,
+      "y": 650
+    },
+    "location": "示意点位：前臂桡侧区域。具体定位请以经审校教材为准。",
+    "indications": [
+      "待录入经专业审校的学习资料"
+    ],
+    "efficacyTags": [],
+    "source": "演示记录；定位坐标和功效字段尚未完成教材校勘。"
+  },
+  {
+    "id": "demo-st36",
+    "nameZh": "足三里",
+    "pinyin": "Zúsānlǐ",
+    "code": "ST36",
+    "meridianId": "ST",
+    "view": "front",
+    "coordinate": {
+      "x": 620,
+      "y": 1160
+    },
+    "location": "示意点位：小腿前外侧区域。具体定位请以经审校教材为准。",
+    "indications": [
+      "待录入经专业审校的学习资料"
+    ],
+    "efficacyTags": [],
+    "source": "演示记录；定位坐标和功效字段尚未完成教材校勘。"
+  },
+  {
+    "id": "demo-ren12",
+    "nameZh": "中脘",
+    "pinyin": "Zhōngwǎn",
+    "code": "CV12",
+    "meridianId": "REN",
+    "view": "front",
+    "coordinate": {
+      "x": 500,
+      "y": 650
+    },
+    "location": "示意点位：上腹部正中区域。具体定位请以经审校教材为准。",
+    "indications": [
+      "待录入经专业审校的学习资料"
+    ],
+    "efficacyTags": [],
+    "source": "演示记录；定位坐标和功效字段尚未完成教材校勘。"
+  },
+  {
+    "id": "demo-du20",
+    "nameZh": "百会",
+    "pinyin": "Bǎihuì",
+    "code": "GV20",
+    "meridianId": "DU",
+    "view": "back",
+    "coordinate": {
+      "x": 500,
+      "y": 115
+    },
+    "location": "示意点位：头顶部区域。具体定位请以经审校教材为准。",
+    "indications": [
+      "待录入经专业审校的学习资料"
+    ],
+    "efficacyTags": [],
+    "source": "演示记录；定位坐标和功效字段尚未完成教材校勘。"
+  }
 ]

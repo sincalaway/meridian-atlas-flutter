@@ -94,6 +94,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
   String _pointSearchQuery = '';
   String _pointMeridianFilter = 'all';
   bool _favoritesOnly = false;
+  final Set<String> _efficacyFilter = {};
   bool _favoritesReady = false;
 
   @override
@@ -318,6 +319,14 @@ class _MeridianHomePageState extends State<MeridianHomePage>
                 favoritesReady: _favoritesReady,
                 onFavoriteToggle: _toggleFavorite,
                 onPointSelected: _selectSearchResult,
+                selectedEfficacyTags: _efficacyFilter,
+                onEfficacyTagToggled: (tag) {
+                  HapticFeedback.selectionClick();
+                  setState(() {
+                    if (!_efficacyFilter.add(tag)) _efficacyFilter.remove(tag);
+                  });
+                },
+                onEfficacyTagsCleared: () => setState(_efficacyFilter.clear),
               ),
               const SizedBox(height: 24),
               _buildSectionHeading('选择经络', trailing: '${_selectedIds.length} 条已叠加'),
@@ -668,6 +677,23 @@ class _MeridianHomePageState extends State<MeridianHomePage>
           ),
           const SizedBox(height: 13),
           Text(point.location, style: const TextStyle(fontSize: 12, height: 1.55, color: Color(0xFFD0DAD5))),
+          if (point.efficacyTags.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: point.efficacyTags
+                  .map((tag) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: meridian.color.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(tag, style: const TextStyle(fontSize: 10, color: Color(0xFFD5E2DD))),
+                      ))
+                  .toList(),
+            ),
+          ],
           const SizedBox(height: 10),
           Text('资料状态：${point.source}', style: TextStyle(fontSize: 10, height: 1.45, color: Colors.white.withOpacity(0.44))),
           const SizedBox(height: 6),

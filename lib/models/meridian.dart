@@ -84,6 +84,7 @@ class Acupoint {
     required this.y,
     required this.location,
     required this.indications,
+    this.efficacyTags = const [],
     required this.source,
   });
 
@@ -97,6 +98,10 @@ class Acupoint {
   final double y;
   final String location;
   final List<String> indications;
+
+  /// 功效分类标签（如按教材主治归类后的短标签），用于「按功效筛选」。
+  /// 必须来自经审校的资料；为空表示尚未录入。
+  final List<String> efficacyTags;
   final String source;
 
   factory Acupoint.fromJson(Map<String, dynamic> json) {
@@ -112,6 +117,7 @@ class Acupoint {
       y: (coordinate['y'] as num).toDouble(),
       location: json['location'] as String? ?? '',
       indications: (json['indications'] as List<dynamic>? ?? const []).cast<String>(),
+      efficacyTags: (json['efficacyTags'] as List<dynamic>? ?? const []).cast<String>(),
       source: json['source'] as String? ?? '',
     );
   }
