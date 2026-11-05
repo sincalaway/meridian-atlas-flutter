@@ -45,12 +45,15 @@ class AcupointSearchPanel extends StatelessWidget {
   final VoidCallback? onEfficacyTagsCleared;
 
   /// 数据中出现过的全部功效标签，按出现次数降序、再按字典序。
+  /// 超过此字数的功效描述（多为长句译文）只在穴位卡片中显示，不进筛选列表。
+  static const int maxFilterTagLength = 8;
+
   static List<String> availableEfficacyTags(List<Acupoint> points) {
     final counts = <String, int>{};
     for (final point in points) {
       for (final tag in point.efficacyTags) {
         final trimmed = tag.trim();
-        if (trimmed.isEmpty) continue;
+        if (trimmed.isEmpty || trimmed.characters.length > maxFilterTagLength) continue;
         counts[trimmed] = (counts[trimmed] ?? 0) + 1;
       }
     }

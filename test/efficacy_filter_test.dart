@@ -33,6 +33,13 @@ void main() {
     ]), ['标签B', '标签A']);
   });
 
+  test('超长功效描述不进筛选列表，但仍可命中筛选', () {
+    final longTag = '标签' * 5; // 10 个字，超过上限
+    final withLong = _point('5', ['标签A', longTag]);
+    expect(AcupointSearchPanel.availableEfficacyTags([withLong]), ['标签A']);
+    expect(AcupointSearchPanel.matchesEfficacy(withLong, {'标签A'}), isTrue);
+  });
+
   test('未选标签时全部通过，选中后按任一命中筛选', () {
     expect(points.where((p) => AcupointSearchPanel.matchesEfficacy(p, {})).length, 3);
     expect(points.where((p) => AcupointSearchPanel.matchesEfficacy(p, {'标签A'})).map((p) => p.id), ['1']);
