@@ -318,7 +318,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
               const SizedBox(height: 14),
               _buildAnimationControls(),
               const SizedBox(height: 24),
-              _buildSectionHeading('搜索穴位', trailing: '${widget.acupoints.length} 个示例点'),
+              _buildSectionHeading('搜索穴位', trailing: '${widget.acupoints.length} 个穴位'),
               const SizedBox(height: 12),
               AcupointSearchPanel(
                 points: widget.acupoints,
@@ -702,7 +702,11 @@ class _MeridianHomePageState extends State<MeridianHomePage>
             ],
           ),
           const SizedBox(height: 13),
-          Text(point.location, style: const TextStyle(fontSize: 12, height: 1.55, color: Color(0xFFD0DAD5))),
+          if (point.specialCategories.isNotEmpty) ...[
+            Text(point.specialCategories.join(' · '), style: TextStyle(fontSize: 11, color: meridian.color.withOpacity(0.9))),
+            const SizedBox(height: 6),
+          ],
+          Text('定位：${point.location}', style: const TextStyle(fontSize: 12, height: 1.55, color: Color(0xFFD0DAD5))),
           if (point.efficacyTags.isNotEmpty) ...[
             const SizedBox(height: 10),
             Wrap(
@@ -720,8 +724,27 @@ class _MeridianHomePageState extends State<MeridianHomePage>
                   .toList(),
             ),
           ],
+          if (point.indications.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            const Text('主治（学习资料）', style: TextStyle(fontSize: 11, color: Color(0xFF92A69F))),
+            const SizedBox(height: 4),
+            ...point.indications.map((item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Text('· $item', style: const TextStyle(fontSize: 12, height: 1.45, color: Color(0xFFC4D0CB))),
+                )),
+          ],
+          if (point.cautions.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Icon(Icons.warning_amber_rounded, size: 14, color: Color(0xFFE2B86E)),
+              const SizedBox(width: 5),
+              Expanded(child: Text(point.cautions, style: const TextStyle(fontSize: 11, color: Color(0xFFE2C99A)))),
+            ]),
+          ],
           const SizedBox(height: 10),
-          Text('资料状态：${point.source}', style: TextStyle(fontSize: 10, height: 1.45, color: Colors.white.withOpacity(0.44))),
+          Text('仅供学习参考，不作诊疗依据。', style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.5))),
+          const SizedBox(height: 4),
+          Text('资料来源：${point.source}', style: TextStyle(fontSize: 10, height: 1.45, color: Colors.white.withOpacity(0.44))),
           const SizedBox(height: 6),
           Align(
             alignment: Alignment.centerLeft,
@@ -748,11 +771,11 @@ class _MeridianHomePageState extends State<MeridianHomePage>
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              _showPoints ? '轻触人体上的标记查看穴位示例' : '开启“显示穴位”后可点选示例标记',
+              _showPoints ? '轻触人体上的标记查看穴位' : '开启“显示穴位”后可点选穴位标记',
               style: const TextStyle(fontSize: 12, color: Color(0xFFB5C4BE)),
             ),
           ),
-          Text('${_visiblePoints.length} 个示例点', style: const TextStyle(fontSize: 10, color: Color(0xFF77918A))),
+          Text('${_visiblePoints.length} 个穴位', style: const TextStyle(fontSize: 10, color: Color(0xFF77918A))),
         ],
       ),
     );

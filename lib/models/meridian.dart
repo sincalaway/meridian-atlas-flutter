@@ -85,6 +85,8 @@ class Acupoint {
     required this.location,
     required this.indications,
     this.efficacyTags = const [],
+    this.specialCategories = const [],
+    this.cautions = '',
     required this.source,
   });
 
@@ -102,6 +104,12 @@ class Acupoint {
   /// 功效分类标签（如按教材主治归类后的短标签），用于「按功效筛选」。
   /// 必须来自经审校的资料；为空表示尚未录入。
   final List<String> efficacyTags;
+
+  /// 特定穴分类（如原穴、合穴、四总穴）。
+  final List<String> specialCategories;
+
+  /// 注意事项（如孕妇慎用）；为空表示资料未注明。
+  final String cautions;
   final String source;
 
   factory Acupoint.fromJson(Map<String, dynamic> json) {
@@ -118,6 +126,8 @@ class Acupoint {
       location: json['location'] as String? ?? '',
       indications: (json['indications'] as List<dynamic>? ?? const []).cast<String>(),
       efficacyTags: (json['efficacyTags'] as List<dynamic>? ?? const []).cast<String>(),
+      specialCategories: (json['specialCategories'] as List<dynamic>? ?? const []).cast<String>(),
+      cautions: json['cautions'] as String? ?? '',
       source: json['source'] as String? ?? '',
     );
   }

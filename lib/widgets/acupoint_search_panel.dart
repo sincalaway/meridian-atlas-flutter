@@ -277,23 +277,10 @@ class AcupointSearchPanel extends StatelessWidget {
       children: [
         header,
         const SizedBox(height: 6),
-        Wrap(
-          spacing: 7,
-          runSpacing: 7,
-          children: tags.map((tag) {
-            final selected = selectedEfficacyTags.contains(tag);
-            return FilterChip(
-              label: Text(tag),
-              selected: selected,
-              onSelected: onEfficacyTagToggled == null ? null : (_) => onEfficacyTagToggled!(tag),
-              labelStyle: TextStyle(fontSize: 11, color: selected ? const Color(0xFFBDECE0) : const Color(0xFFA6B4B1)),
-              selectedColor: const Color(0xFF1E3734),
-              backgroundColor: const Color(0xFF141F22),
-              side: BorderSide(color: selected ? const Color(0xFF47796D) : const Color(0xFF273539)),
-              showCheckmark: false,
-              visualDensity: VisualDensity.compact,
-            );
-          }).toList(),
+        EfficacyTagPicker(
+          tags: tags,
+          selected: selectedEfficacyTags,
+          onToggled: onEfficacyTagToggled,
         ),
       ],
     );
@@ -362,6 +349,125 @@ class AcupointSearchPanel extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// 功效标签选择器：默认只显示出现最多的前 [collapsedCount] 个标签（已选标签始终显示），
+/// 展开后可输入关键字过滤全部标签。
+class EfficacyTagPicker extends StatefulWidget {
+  const EfficacyTagPicker({
+    super.key,
+    required this.tags,
+    required this.selected,
+    this.onToggled,
+    this.collapsedCount = 16,
+  });
+
+  final List<String> tags;
+  final Set<String> selected;
+  final ValueChanged<String>? onToggled;
+  final int collapsedCount;
+
+  /// 计算当前应显示的标签：保持 [tags] 的顺序，已选标签总在其中。
+  static List<String> visibleTags({
+    required List<String> tags,
+    required Set<String> selected,
+    required bool expanded,
+    required String keyword,
+    required int collapsedCount,
+  }) {
+    final key = keyword.trim();
+    if (expanded) {
+      return tags.where((tag) => key.isEmpty || tag.contains(key) || selected.contains(tag)).toList();
+    }
+    final top = tags.take(collapsedCount).toSet();
+    return tags.where((tag) => top.contains(tag) || selected.contains(tag)).toList();
+  }
+
+  @override
+  State<EfficacyTagPicker> createState() => _EfficacyTagPickerState();
+}
+
+class _EfficacyTagPickerState extends State<EfficacyTagPicker> {
+  bool _expanded = false;
+  String _keyword = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final visible = EfficacyTagPicker.visibleTags(
+      tags: widget.tags,
+      selected: widget.selected,
+      expanded: _expanded,
+      keyword: _keyword,
+      collapsedCount: widget.collapsedCount,
+    );
+    final canExpand = widget.tags.length > widget.collapsedCount;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (_expanded) ...[
+          TextField(
+            onChanged: (value) => setState(() => _keyword = value),
+            style: const TextStyle(fontSize: 12),
+            decoration: InputDecoration(
+              isDense: true,
+              hintText: '过滤功效标签（如 安神、止痛）',
+              hintStyle: const TextStyle(fontSize: 11, color: Color(0xFF6F837D)),
+              prefixIcon: const Icon(Icons.filter_list_rounded, size: 16),
+              prefixIconConstraints: const BoxConstraints(minWidth: 32),
+              filled: true,
+              fillColor: const Color(0xFF121D20),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+              contentPadding: const EdgeInsets.symmetric(vertical: 8),
+            ),
+          ),
+          const SizedBox(height: 7),
+        ],
+        if (visible.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 6),
+            child: Text('没有匹配的功效标签', style: TextStyle(fontSize: 11, color: Color(0xFF81968F))),
+          )
+        else
+          Wrap(
+            spacing: 7,
+            runSpacing: 7,
+            children: visible.map((tag) {
+              final selected = widget.selected.contains(tag);
+              return FilterChip(
+                label: Text(tag),
+                selected: selected,
+                onSelected: widget.onToggled == null ? null : (_) => widget.onToggled!(tag),
+                labelStyle: TextStyle(fontSize: 11, color: selected ? const Color(0xFFBDECE0) : const Color(0xFFA6B4B1)),
+                selectedColor: const Color(0xFF1E3734),
+                backgroundColor: const Color(0xFF141F22),
+                side: BorderSide(color: selected ? const Color(0xFF47796D) : const Color(0xFF273539)),
+                showCheckmark: false,
+                visualDensity: VisualDensity.compact,
+              );
+            }).toList(),
+          ),
+        if (canExpand)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              onPressed: () => setState(() {
+                _expanded = !_expanded;
+                _keyword = '';
+              }),
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF9FC9BC),
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+              ),
+              child: Text(
+                _expanded ? '收起' : '展开全部 ${widget.tags.length} 个标签',
+                style: const TextStyle(fontSize: 11),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

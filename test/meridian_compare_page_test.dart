@@ -21,7 +21,7 @@ void main() {
     final group = rows.firstWhere((r) => r.$1 == '手足分类');
     expect(group.$2, '手经');
     expect(group.$3, '足经');
-    final points = rows.firstWhere((r) => r.$1 == '示例穴位');
+    final points = rows.firstWhere((r) => r.$1 == '已收录穴位');
     expect(points.$2, '${acupoints.where((p) => p.meridianId == 'LU').length}');
   });
 

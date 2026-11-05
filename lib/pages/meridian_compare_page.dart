@@ -40,7 +40,7 @@ class MeridianComparePage extends StatefulWidget {
       ('阴阳', a.yinYang, b.yinYang),
       ('路径段数', '${a.routes.length}', '${b.routes.length}'),
       ('路径所在面', views(a), views(b)),
-      ('示例穴位', pointCount(a), pointCount(b)),
+      ('已收录穴位', pointCount(a), pointCount(b)),
     ];
   }
 

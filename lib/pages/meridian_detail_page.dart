@@ -124,7 +124,7 @@ class _MeridianDetailPageState extends State<MeridianDetailPage>
             const SizedBox(height: 10),
             _buildInfoCard(),
             const SizedBox(height: 22),
-            _sectionTitle('相关穴位', trailing: '${related.length} 个示例点'),
+            _sectionTitle('相关穴位', trailing: '${related.length} 个穴位'),
             const SizedBox(height: 10),
             if (related.isEmpty) _buildEmptyPoints() else ...related.map((point) => _buildPointTile(point, color)),
             const SizedBox(height: 16),
@@ -349,7 +349,7 @@ class _MeridianDetailPageState extends State<MeridianDetailPage>
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(color: const Color(0xFF121D20), borderRadius: BorderRadius.circular(14)),
-      child: const Text('这条经络暂未录入示例穴位。', style: TextStyle(fontSize: 12, color: Color(0xFFB5C4BE))),
+      child: const Text('这条经络暂未录入穴位。', style: TextStyle(fontSize: 12, color: Color(0xFFB5C4BE))),
     );
   }
 
