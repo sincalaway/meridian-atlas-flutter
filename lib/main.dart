@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/meridian_repository.dart';
 import 'models/meridian.dart';
+import 'pages/meridian_compare_page.dart';
 import 'pages/meridian_detail_page.dart';
 import 'widgets/acupoint_search_panel.dart';
 import 'widgets/meridian_canvas.dart';
@@ -208,6 +209,20 @@ class _MeridianHomePageState extends State<MeridianHomePage>
     );
     if (!mounted || picked == null) return;
     _selectSearchResult(picked);
+  }
+
+  void _openCompare(List<Meridian> selected) {
+    HapticFeedback.selectionClick();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => MeridianComparePage(
+          meridians: widget.meridians,
+          acupoints: widget.acupoints,
+          initialLeftId: selected.isNotEmpty ? selected[0].id : null,
+          initialRightId: selected.length > 1 ? selected[1].id : null,
+        ),
+      ),
+    );
   }
 
   void _setSpeed(double value) {
@@ -609,12 +624,22 @@ class _MeridianHomePageState extends State<MeridianHomePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('查看经络详情', style: TextStyle(fontSize: 11, color: Colors.white.withOpacity(0.5))),
+        Text('经络详情与对比', style: TextStyle(fontSize: 11, color: Colors.white.withOpacity(0.5))),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: selected.map((meridian) {
+          children: [
+            ActionChip(
+              onPressed: () => _openCompare(selected),
+              avatar: const Icon(Icons.compare_arrows_rounded, size: 15, color: Color(0xFF72D6C2)),
+              label: const Text('对比两条经络'),
+              labelStyle: const TextStyle(fontSize: 11, color: Color(0xFFBDECE0)),
+              backgroundColor: const Color(0xFF17292A),
+              side: const BorderSide(color: Color(0xFF3D6B61)),
+              visualDensity: VisualDensity.compact,
+            ),
+            ...selected.map((meridian) {
             return ActionChip(
               onPressed: () => _openMeridianDetail(meridian),
               avatar: Icon(Icons.menu_book_rounded, size: 14, color: meridian.color),
@@ -624,7 +649,8 @@ class _MeridianHomePageState extends State<MeridianHomePage>
               side: BorderSide(color: meridian.color.withOpacity(0.45)),
               visualDensity: VisualDensity.compact,
             );
-          }).toList(),
+          }),
+          ],
         ),
       ],
     );
