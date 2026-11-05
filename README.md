@@ -6,6 +6,8 @@
 
 - 以矢量轮廓绘制人体正、背面示意图。
 - 提供十二正经与任脉、督脉的 14 个经络数据项，可按全部、手经、足经、奇经筛选并多选叠加。
+- 支持按穴位中文名、拼音或代码搜索，并可按所属经络筛选结果。
+- 穴位可加入本机收藏，收藏列表通过 `shared_preferences` 在应用重启后保留。
 - 使用 `AnimationController` + `CustomPainter` 绘制循环流动粒子；可暂停、重置、调速和切换流动方向。
 - 穴位示例支持点选并展示名称、拼音、国际代码、定位提示和资料状态。
 - 所有数据由 `assets/data/*.json` 本地加载，预留来源字段。
@@ -44,7 +46,7 @@
 
 ## 运行
 
-需要本机已安装 Flutter 3.x 和 Dart 3.x：
+需要本机已安装 Flutter 3.x 和 Dart 3.x。首次运行会拉取 Flutter 依赖（包括用于保存收藏的 `shared_preferences`）：
 
 ```bash
 bash tool/bootstrap_platforms.sh   # 首次运行：生成 Android/iOS 原生目录并拉取 Flutter 依赖
@@ -60,6 +62,7 @@ lib/
   main.dart                         # 首屏与交互
   data/meridian_repository.dart     # JSON 加载
   models/meridian.dart              # 经络、路线、穴位模型
+  widgets/acupoint_search_panel.dart # 穴位搜索、筛选与收藏列表
   widgets/meridian_canvas.dart      # 人体/路径/粒子绘制
 assets/data/
   meridians.json

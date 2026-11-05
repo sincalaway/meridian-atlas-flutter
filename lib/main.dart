@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/meridian_repository.dart';
 import 'models/meridian.dart';
+import 'widgets/acupoint_search_panel.dart';
 import 'widgets/meridian_canvas.dart';
 
 void main() {
@@ -83,6 +85,15 @@ class _MeridianHomePageState extends State<MeridianHomePage>
   bool _reverse = false;
   bool _showPoints = true;
   Acupoint? _activePoint;
+  final TextEditingController _pointSearchController = TextEditingController();
+  final Set<String> _favoritePointIds = {};
+  final Map<String, bool> _favoriteOverridesDuringLoad = {};
+  Future<void> _favoriteSaveQueue = Future<void>.value();
+  static const String _favoritesStorageKey = 'favorite_acupoint_ids';
+  String _pointSearchQuery = '';
+  String _pointMeridianFilter = 'all';
+  bool _favoritesOnly = false;
+  bool _favoritesReady = false;
 
   @override
   void initState() {
@@ -91,11 +102,13 @@ class _MeridianHomePageState extends State<MeridianHomePage>
       vsync: this,
       duration: const Duration(milliseconds: 4200),
     )..repeat();
+    _loadFavorites();
   }
 
   @override
   void dispose() {
     _flowController.dispose();
+    _pointSearchController.dispose();
     super.dispose();
   }
 
@@ -110,6 +123,74 @@ class _MeridianHomePageState extends State<MeridianHomePage>
   List<Acupoint> get _visiblePoints => widget.acupoints
       .where((point) => point.view == _view && _selectedIds.contains(point.meridianId))
       .toList();
+
+  Future<void> _loadFavorites() async {
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      final savedIds = preferences.getStringList(_favoritesStorageKey) ?? const [];
+      if (!mounted) return;
+      setState(() {
+        _favoritePointIds.addAll(savedIds);
+        for (final entry in _favoriteOverridesDuringLoad.entries) {
+          if (entry.value) {
+            _favoritePointIds.add(entry.key);
+          } else {
+            _favoritePointIds.remove(entry.key);
+          }
+        }
+        _favoritesReady = true;
+      });
+      if (_favoriteOverridesDuringLoad.isNotEmpty) _saveFavorites();
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _favoritesReady = true);
+      if (_favoriteOverridesDuringLoad.isNotEmpty) _saveFavorites();
+    }
+  }
+
+  Future<void> _saveFavorites() {
+    final saved = _favoritePointIds.toList()..sort();
+    _favoriteSaveQueue = _favoriteSaveQueue.then((_) async {
+      try {
+        final preferences = await SharedPreferences.getInstance();
+        final success = await preferences.setStringList(_favoritesStorageKey, saved);
+        if (!success && mounted) _showFavoritesSaveError();
+      } catch (_) {
+        if (mounted) _showFavoritesSaveError();
+      }
+    });
+    return _favoriteSaveQueue;
+  }
+
+  void _showFavoritesSaveError() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('收藏保存失败，请稍后重试。')),
+    );
+  }
+
+  void _toggleFavorite(Acupoint point) {
+    HapticFeedback.selectionClick();
+    var isFavorite = false;
+    setState(() {
+      if (!_favoritePointIds.add(point.id)) _favoritePointIds.remove(point.id);
+      isFavorite = _favoritePointIds.contains(point.id);
+      if (!_favoritesReady) {
+        _favoriteOverridesDuringLoad[point.id] = isFavorite;
+      }
+    });
+    if (_favoritesReady) _saveFavorites();
+  }
+
+  void _selectSearchResult(Acupoint point) {
+    HapticFeedback.lightImpact();
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _view = point.view;
+      _selectedIds.add(point.meridianId);
+      _showPoints = true;
+      _activePoint = point;
+    });
+  }
 
   void _setSpeed(double value) {
     setState(() => _speed = value);
@@ -203,6 +284,24 @@ class _MeridianHomePageState extends State<MeridianHomePage>
               _buildCanvas(selected),
               const SizedBox(height: 14),
               _buildAnimationControls(),
+              const SizedBox(height: 24),
+              _buildSectionHeading('搜索穴位', trailing: '${widget.acupoints.length} 个示例点'),
+              const SizedBox(height: 12),
+              AcupointSearchPanel(
+                points: widget.acupoints,
+                meridians: widget.meridians,
+                controller: _pointSearchController,
+                query: _pointSearchQuery,
+                onQueryChanged: (value) => setState(() => _pointSearchQuery = value),
+                selectedMeridianId: _pointMeridianFilter,
+                onMeridianChanged: (value) => setState(() => _pointMeridianFilter = value),
+                favoritesOnly: _favoritesOnly,
+                onFavoritesOnlyChanged: (value) => setState(() => _favoritesOnly = value),
+                favoriteIds: _favoritePointIds,
+                favoritesReady: _favoritesReady,
+                onFavoriteToggle: _toggleFavorite,
+                onPointSelected: _selectSearchResult,
+              ),
               const SizedBox(height: 24),
               _buildSectionHeading('选择经络', trailing: '${_selectedIds.length} 条已叠加'),
               const SizedBox(height: 12),
@@ -505,6 +604,14 @@ class _MeridianHomePageState extends State<MeridianHomePage>
                   const SizedBox(height: 3),
                   Text('${point.pinyin}  ·  ${meridian.nameZh}', style: const TextStyle(fontSize: 11, color: Color(0xFFA8BDB5))),
                 ]),
+              ),
+              IconButton(
+                tooltip: _favoritePointIds.contains(point.id) ? '取消收藏' : '收藏穴位',
+                onPressed: () => _toggleFavorite(point),
+                icon: Icon(
+                  _favoritePointIds.contains(point.id) ? Icons.star_rounded : Icons.star_border_rounded,
+                  color: _favoritePointIds.contains(point.id) ? const Color(0xFFE2C66E) : const Color(0xFF83958F),
+                ),
               ),
               IconButton(
                 onPressed: () => setState(() => _activePoint = null),
