@@ -15,15 +15,20 @@ void main() {
       .toList();
 
   test('导入的穴位数据完整：编号唯一、经络存在、坐标在画布内、有出处', () {
-    expect(points.length, greaterThanOrEqualTo(200));
+    expect(points.length, 361);
     expect(points.map((p) => p.id).toSet().length, points.length);
     for (final p in points) {
       expect(meridianIds, contains(p.meridianId), reason: p.code);
       expect(p.x, inInclusiveRange(0, 1000), reason: p.code);
       expect(p.y, inInclusiveRange(0, 1600), reason: p.code);
-      expect(p.efficacyTags, isNotEmpty, reason: p.code);
-      expect(p.source, contains('CC BY-SA 4.0'), reason: p.code);
+      // 乳中（ST17）原文仅作定位标志，没有功效。
+      if (!p.specialCategories.contains('仅作定位标志')) {
+        expect(p.efficacyTags, isNotEmpty, reason: p.code);
+      }
+      expect(p.source, anyOf(contains('CC BY-SA 4.0'), contains('CC BY 4.0')), reason: p.code);
     }
+    // 本草典 208 穴 + AcuAtlas 补全 153 穴
+    expect(points.where((p) => p.source.contains('AcuAtlas')).length, 153);
     // 14 条经络都有穴位
     expect(points.map((p) => p.meridianId).toSet(), meridianIds);
   });
