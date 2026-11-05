@@ -1,0 +1,17 @@
+name: meridian_atlas
+description: 经络穴位可视化学习辅助工具（2D 原型）
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/meridians.json
+    - assets/data/acupoints.json
