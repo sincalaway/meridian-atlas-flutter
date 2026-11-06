@@ -41,4 +41,7 @@ for name in sys.argv[1:]:
         face = [[lm.x * W, lm.y * H] for lm in fr.face_landmarks[0]]
     out[name] = {'size': [W, H], 'pose': pose, 'hands': hands, 'face': face}
     print(name, len(hands), len(face))
-json.dump(out, open('mp2.json', 'w'))
+import os
+prev = json.load(open('mp2.json')) if os.path.exists('mp2.json') else {}
+prev.update(out)
+json.dump(prev, open('mp2.json', 'w'))

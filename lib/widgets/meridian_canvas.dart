@@ -198,6 +198,46 @@ class _AtlasPainter extends CustomPainter {
         (meridian.color, _smooth(run), _smooth(run).computeMetrics().toList(growable: false)),
   ];
 
+  /// 跨视图的「过渡」虚线：两穴都在本视图，但中间隔了 1–3 个位于另一面的穴位
+  /// （如大肠经 臂臑 → 肩髃（正面）→ 巨骨），最多跨 3 穴，用虚线表示经络绕到另一面再回来。
+  late final List<(Color, Offset, Offset)> _bridges = [
+    for (final meridian in meridians) ..._bridgesOf(meridian),
+  ];
+
+  List<(Color, Offset, Offset)> _bridgesOf(Meridian meridian) {
+    final seq = allPoints.where((p) => p.meridianId == meridian.id).toList()
+      ..sort((a, b) => _codeNumber(a.code).compareTo(_codeNumber(b.code)));
+    final out = <(Color, Offset, Offset)>[];
+    Acupoint? last;
+    var skipped = 0;
+    for (final p in seq) {
+      if (p.positionsFor(figure).isEmpty) continue;
+      if (p.view != view) {
+        if (last != null) skipped++;
+        continue;
+      }
+      if (_restartAt.contains(p.code)) last = null;
+      if (last != null && skipped > 0 && skipped <= 3) {
+        final a = last.positionsFor(figure);
+        final b = p.positionsFor(figure);
+        final n = math.min(a.length, b.length);
+        for (var i = 0; i < n; i++) {
+          out.add((meridian.color, a[i], b[i]));
+        }
+      }
+      last = p;
+      skipped = 0;
+    }
+    return out;
+  }
+
+  /// 经络循行中穴序相邻却不相连的地方：从这个穴位起另起一段。
+  /// 膀胱经：委中（BL40）之后，第二侧线从附分（BL41）在背部重新开始。
+  static const _restartAt = {'BL41'};
+
+  /// 穴序相邻但循行要经过前面某穴：秩边（BL54）下行经委中（BL40）与第一侧线会合，再到合阳（BL55）。
+  static const _via = {'BL55': 'BL40'};
+
   static int _codeNumber(String code) {
     final match = RegExp(r'(\d+)').firstMatch(code);
     return match == null ? 0 : int.parse(match.group(1)!);
@@ -217,6 +257,16 @@ class _AtlasPainter extends CustomPainter {
           if (current.length > 1) runs.add(current);
           current = <Offset>[];
           continue;
+        }
+        if (_restartAt.contains(p.code)) {
+          if (current.length > 1) runs.add(current);
+          current = <Offset>[];
+        }
+        final viaCode = _via[p.code];
+        if (viaCode != null && current.isNotEmpty) {
+          final via = seq.where((q) => q.code == viaCode && q.view == view).firstOrNull;
+          final vp = via?.positionsFor(figure) ?? const <Offset>[];
+          if (vp.isNotEmpty) current.add(vp[math.min(side, vp.length - 1)]);
         }
         if (pos.length > 1) bilateral = true;
         current.add(pos[math.min(side, pos.length - 1)]);
@@ -248,6 +298,21 @@ class _AtlasPainter extends CustomPainter {
     final px = 1 / (fit * zoom); // 1 屏幕像素对应的图片像素
     canvas.save();
     canvas.scale(fit);
+
+    for (final (color, a, b) in _bridges) {
+      final d = b - a;
+      final len = d.distance;
+      if (len == 0) continue;
+      final dash = 6 * px, gap = 5 * px;
+      final paint = Paint()
+        ..color = color.withOpacity(0.8)
+        ..strokeWidth = 1.8 * px
+        ..strokeCap = StrokeCap.round;
+      for (var t = 0.0; t < len; t += dash + gap) {
+        final e = math.min(t + dash, len);
+        canvas.drawLine(a + d * (t / len), a + d * (e / len), paint);
+      }
+    }
 
     for (final (color, path, metrics) in _paths) {
       canvas.drawPath(
