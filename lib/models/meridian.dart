@@ -88,6 +88,7 @@ class Acupoint {
     this.specialCategories = const [],
     this.cautions = '',
     required this.source,
+    this.placements = const {},
   });
 
   final String id;
@@ -111,6 +112,30 @@ class Acupoint {
   /// 注意事项（如孕妇慎用）；为空表示资料未注明。
   final String cautions;
   final String source;
+
+  /// 写实底图上的位置：figure ('male'/'female') -> 1~2 个图片像素坐标。
+  /// 由 [BodyAtlas] 合并；为空表示尚无底图定位。
+  final Map<String, List<Offset>> placements;
+
+  List<Offset> positionsFor(String figure) => placements[figure] ?? const [];
+
+  Acupoint withPlacement(String newView, Map<String, List<Offset>> newPlacements) => Acupoint(
+        id: id,
+        nameZh: nameZh,
+        pinyin: pinyin,
+        code: code,
+        meridianId: meridianId,
+        view: newView,
+        x: x,
+        y: y,
+        location: location,
+        indications: indications,
+        efficacyTags: efficacyTags,
+        specialCategories: specialCategories,
+        cautions: cautions,
+        source: source,
+        placements: newPlacements,
+      );
 
   factory Acupoint.fromJson(Map<String, dynamic> json) {
     final coordinate = json['coordinate'] as Map<String, dynamic>;

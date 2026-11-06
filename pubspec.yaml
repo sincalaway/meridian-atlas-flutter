@@ -20,3 +20,5 @@ flutter:
   assets:
     - assets/data/meridians.json
     - assets/data/acupoints.json
+    - assets/data/body_positions.json
+    - assets/body/

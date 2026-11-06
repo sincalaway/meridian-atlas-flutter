@@ -1,9 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/meridian_repository.dart';
 import 'models/meridian.dart';
+import 'pages/acupoint_detail_page.dart';
 import 'pages/meridian_compare_page.dart';
 import 'pages/meridian_detail_page.dart';
 import 'widgets/acupoint_search_panel.dart';
@@ -81,6 +84,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
   late final AnimationController _flowController;
   final Set<String> _selectedIds = {'LI'};
   String _view = 'front';
+  String _figure = 'male';
   String _group = 'all';
   double _speed = 1.0;
   bool _playing = true;
@@ -122,6 +126,9 @@ class _MeridianHomePageState extends State<MeridianHomePage>
         if (_group == 'all') return true;
         return meridian.group == _group;
       }).toList();
+
+  List<Acupoint> get _selectedPoints =>
+      widget.acupoints.where((point) => _selectedIds.contains(point.meridianId)).toList();
 
   List<Acupoint> get _visiblePoints => widget.acupoints
       .where((point) => point.view == _view && _selectedIds.contains(point.meridianId))
@@ -204,6 +211,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
           acupoints: widget.acupoints,
           favoriteIds: _favoritePointIds,
           initialView: _view,
+          figure: _figure,
         ),
       ),
     );
@@ -220,6 +228,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
           acupoints: widget.acupoints,
           initialLeftId: selected.isNotEmpty ? selected[0].id : null,
           initialRightId: selected.length > 1 ? selected[1].id : null,
+          figure: _figure,
         ),
       ),
     );
@@ -259,36 +268,41 @@ class _MeridianHomePageState extends State<MeridianHomePage>
     });
   }
 
-  void _handleCanvasTap(TapDownDetails details) {
-    // Use the canvas' own geometry so hit testing remains aligned with letterboxing.
-    final canvasContext = _canvasKey.currentContext;
-    final canvasBox = canvasContext?.findRenderObject() as RenderBox?;
-    if (canvasBox == null) return;
-    final size = canvasBox.size;
-    final scale = (size.width / 1000).clamp(0.0, size.height / 1600);
-    if (scale <= 0) return;
-    final left = (size.width - 1000 * scale) / 2;
-    final top = (size.height - 1600 * scale) / 2;
-    final point = Offset(
-      (details.localPosition.dx - left) / scale,
-      (details.localPosition.dy - top) / scale,
-    );
-    Acupoint? nearest;
-    var nearestDistance = double.infinity;
-    for (final candidate in _visiblePoints) {
-      final distance = (Offset(candidate.x, candidate.y) - point).distance;
-      if (distance < nearestDistance) {
-        nearest = candidate;
-        nearestDistance = distance;
-      }
-    }
-    if (nearest != null && nearestDistance < 58) {
-      HapticFeedback.lightImpact();
-      setState(() => _activePoint = nearest);
-    }
+  Future<void> _openPointDetail(Acupoint point) async {
+    HapticFeedback.lightImpact();
+    setState(() => _activePoint = point);
+    final meridian = widget.meridians.firstWhere((m) => m.id == point.meridianId);
+    await Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => AcupointDetailPage(
+        point: point,
+        meridian: meridian,
+        acupoints: widget.acupoints.where((p) => p.meridianId == meridian.id).toList(),
+        figure: _figure,
+        isFavorite: _favoritePointIds.contains(point.id),
+        onFavoriteToggle: () => _toggleFavorite(point),
+        onOpenMeridian: () {
+          Navigator.of(context).pop();
+          _openMeridianDetail(meridian);
+        },
+      ),
+    ));
   }
 
-  final GlobalKey _canvasKey = GlobalKey();
+  void _openFullscreen() {
+    HapticFeedback.selectionClick();
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => _FullscreenAtlasPage(
+        meridians: _selectedMeridians,
+        acupoints: _selectedPoints,
+        view: _view,
+        figure: _figure,
+        animation: _flowController,
+        reverse: _reverse,
+        onPointTap: _openPointDetail,
+      ),
+    ));
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -417,11 +431,15 @@ class _MeridianHomePageState extends State<MeridianHomePage>
           _view = 'back';
           _activePoint = null;
         })),
+        const SizedBox(width: 14),
+        _ViewButton(label: '男', selected: _figure == 'male', onTap: () => setState(() => _figure = 'male')),
+        const SizedBox(width: 6),
+        _ViewButton(label: '女', selected: _figure == 'female', onTap: () => setState(() => _figure = 'female')),
         const Spacer(),
         TextButton.icon(
           onPressed: () => setState(() => _showPoints = !_showPoints),
           icon: Icon(_showPoints ? Icons.radio_button_checked : Icons.radio_button_unchecked, size: 16),
-          label: Text(_showPoints ? '显示穴位' : '隐藏穴位', style: const TextStyle(fontSize: 12)),
+          label: Text(_showPoints ? '穴位' : '穴位', style: const TextStyle(fontSize: 12)),
           style: TextButton.styleFrom(foregroundColor: const Color(0xFFB3C6C0), visualDensity: VisualDensity.compact),
         ),
       ],
@@ -429,8 +447,9 @@ class _MeridianHomePageState extends State<MeridianHomePage>
   }
 
   Widget _buildCanvas(List<Meridian> selected) {
+    final height = math.min(640.0, MediaQuery.sizeOf(context).height * 0.68);
     return Container(
-      height: 390,
+      height: height,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
@@ -438,33 +457,42 @@ class _MeridianHomePageState extends State<MeridianHomePage>
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF172326), Color(0xFF10191C), Color(0xFF182221)],
+          colors: [Color(0xFF121619), Color(0xFF121619)],
         ),
       ),
       child: Stack(
         children: [
           Positioned.fill(
-            child: RepaintBoundary(
-              child: AnimatedBuilder(
-                animation: _flowController,
-                builder: (context, _) => MeridianCanvas(
-                  key: _canvasKey,
-                  meridians: selected,
-                  acupoints: _visiblePoints,
-                  view: _view,
-                  progress: _flowController.value,
-                  reverse: _reverse,
-                  showPoints: _showPoints,
-                  activePointId: _activePoint?.id,
-                  onTapDown: _handleCanvasTap,
-                ),
-              ),
+            child: MeridianCanvas(
+              meridians: selected,
+              acupoints: _selectedPoints,
+              view: _view,
+              figure: _figure,
+              animation: _flowController,
+              reverse: _reverse,
+              showPoints: _showPoints,
+              activePointId: _activePoint?.id,
+              onPointTap: _openPointDetail,
             ),
           ),
           Positioned(
             left: 14,
             top: 14,
             child: _CanvasBadge(label: _view == 'front' ? '前侧视图' : '后侧视图', icon: Icons.person_outline_rounded),
+          ),
+          Positioned(
+            right: 12,
+            top: 54,
+            child: IconButton.filledTonal(
+              onPressed: _openFullscreen,
+              tooltip: '全屏查看',
+              icon: const Icon(Icons.fullscreen_rounded, size: 18),
+              style: IconButton.styleFrom(
+                backgroundColor: const Color(0xFF26363A),
+                foregroundColor: const Color(0xFFD7E5E0),
+                fixedSize: const Size(36, 36),
+              ),
+            ),
           ),
           Positioned(
             right: 12,
@@ -491,7 +519,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
           Positioned(
             right: 14,
             bottom: 13,
-            child: Text('示意坐标 0–1000', style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.38))),
+            child: Text('双指放大显示穴名 · 位置为示意', style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.45))),
           ),
         ],
       ),
@@ -746,6 +774,13 @@ class _MeridianHomePageState extends State<MeridianHomePage>
           const SizedBox(height: 4),
           Text('资料来源：${point.source}', style: TextStyle(fontSize: 10, height: 1.45, color: Colors.white.withOpacity(0.44))),
           const SizedBox(height: 6),
+          Wrap(spacing: 4, children: [
+          TextButton.icon(
+            onPressed: () => _openPointDetail(point),
+            icon: const Icon(Icons.article_outlined, size: 15),
+            label: const Text('穴位介绍', style: TextStyle(fontSize: 12)),
+            style: TextButton.styleFrom(foregroundColor: const Color(0xFFFFE08A), padding: EdgeInsets.zero, visualDensity: VisualDensity.compact),
+          ),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
@@ -755,6 +790,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
               style: TextButton.styleFrom(foregroundColor: meridian.color, padding: EdgeInsets.zero, visualDensity: VisualDensity.compact),
             ),
           ),
+          ]),
         ],
       ),
     );
@@ -771,7 +807,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              _showPoints ? '轻触人体上的标记查看穴位' : '开启“显示穴位”后可点选穴位标记',
+              _showPoints ? '轻触穴位进入介绍，双指放大可看穴名' : '开启“穴位”后可点选穴位标记',
               style: const TextStyle(fontSize: 12, color: Color(0xFFB5C4BE)),
             ),
           ),
@@ -796,7 +832,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
           SizedBox(width: 9),
           Expanded(
             child: Text(
-              '当前路径与穴位位置为界面演示素材，尚未完成专业校勘，不用于诊断、治疗或实际操作指导。',
+              '人体底图为 AI 生成的写实示意图；穴位位置按骨度分寸由体表标志推算，经络线按穴序连接，均为学习示意，尚未完成专业校勘，不用于诊断、治疗或实际操作指导。',
               style: TextStyle(fontSize: 10, height: 1.5, color: Color(0xFFC6B98F)),
             ),
           ),
@@ -882,4 +918,71 @@ class _LoadError extends StatelessWidget {
           ),
         ),
       );
+}
+
+class _FullscreenAtlasPage extends StatefulWidget {
+  const _FullscreenAtlasPage({
+    required this.meridians,
+    required this.acupoints,
+    required this.view,
+    required this.figure,
+    required this.animation,
+    required this.reverse,
+    required this.onPointTap,
+  });
+
+  final List<Meridian> meridians;
+  final List<Acupoint> acupoints;
+  final String view;
+  final String figure;
+  final Animation<double> animation;
+  final bool reverse;
+  final ValueChanged<Acupoint> onPointTap;
+
+  @override
+  State<_FullscreenAtlasPage> createState() => _FullscreenAtlasPageState();
+}
+
+class _FullscreenAtlasPageState extends State<_FullscreenAtlasPage> {
+  late String _view = widget.view;
+  late String _figure = widget.figure;
+  String? _active;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF121619),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: Text(widget.meridians.isEmpty ? '人体图' : widget.meridians.map((m) => m.nameZh).join('、'),
+            style: const TextStyle(fontSize: 15)),
+        actions: [
+          TextButton(
+            onPressed: () => setState(() => _view = _view == 'front' ? 'back' : 'front'),
+            child: Text(_view == 'front' ? '看背面' : '看正面'),
+          ),
+          TextButton(
+            onPressed: () => setState(() => _figure = _figure == 'male' ? 'female' : 'male'),
+            child: Text(_figure == 'male' ? '换女性' : '换男性'),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: MeridianCanvas(
+          meridians: widget.meridians,
+          acupoints: widget.acupoints,
+          view: _view,
+          figure: _figure,
+          animation: widget.animation,
+          reverse: widget.reverse,
+          showPoints: true,
+          activePointId: _active,
+          onPointTap: (p) {
+            setState(() => _active = p.id);
+            widget.onPointTap(p);
+          },
+        ),
+      ),
+    );
+  }
 }

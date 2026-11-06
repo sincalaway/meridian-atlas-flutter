@@ -14,6 +14,7 @@ class MeridianDetailPage extends StatefulWidget {
     required this.acupoints,
     required this.favoriteIds,
     this.initialView,
+    this.figure = 'male',
   });
 
   final Meridian meridian;
@@ -22,6 +23,7 @@ class MeridianDetailPage extends StatefulWidget {
   final List<Acupoint> acupoints;
   final Set<String> favoriteIds;
   final String? initialView;
+  final String figure;
 
   @override
   State<MeridianDetailPage> createState() => _MeridianDetailPageState();
@@ -37,10 +39,8 @@ class _MeridianDetailPageState extends State<MeridianDetailPage>
   Meridian get _meridian => widget.meridian;
 
   List<String> get _availableViews {
-    final views = <String>[];
-    for (final route in _meridian.routes) {
-      if (!views.contains(route.view)) views.add(route.view);
-    }
+    final set = widget.acupoints.where((p) => p.meridianId == _meridian.id).map((p) => p.view).toSet();
+    final views = [for (final v in const ['front', 'back']) if (set.contains(v)) v];
     return views.isEmpty ? const ['front'] : views;
   }
 
@@ -162,7 +162,7 @@ class _MeridianDetailPageState extends State<MeridianDetailPage>
                 children: [
                   _Tag(label: _groupLabel),
                   if (_meridian.yinYang.isNotEmpty) _Tag(label: _meridian.yinYang),
-                  _Tag(label: '${_meridian.routes.length} 段路径'),
+                  _Tag(label: '${_availableViews.length == 2 ? '正面 + 背面' : (_availableViews.first == 'front' ? '正面' : '背面')}'),
                 ],
               ),
             ],
@@ -183,25 +183,22 @@ class _MeridianDetailPageState extends State<MeridianDetailPage>
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF172326), Color(0xFF10191C)],
+          colors: [Color(0xFF121619), Color(0xFF121619)],
         ),
       ),
       child: Stack(
         children: [
           Positioned.fill(
             child: RepaintBoundary(
-              child: AnimatedBuilder(
+              child: MeridianCanvas(
+                meridians: [_meridian],
+                acupoints: _relatedPoints,
+                view: _view,
+                figure: widget.figure,
                 animation: _flowController,
-                builder: (context, _) => MeridianCanvas(
-                  meridians: [_meridian],
-                  acupoints: viewPoints,
-                  view: _view,
-                  progress: _flowController.value,
-                  reverse: _reverse,
-                  showPoints: true,
-                  activePointId: null,
-                  onTapDown: (_) {},
-                ),
+                reverse: _reverse,
+                showPoints: true,
+                activePointId: null,
               ),
             ),
           ),

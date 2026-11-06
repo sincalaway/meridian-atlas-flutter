@@ -14,12 +14,14 @@ class MeridianComparePage extends StatefulWidget {
     required this.acupoints,
     this.initialLeftId,
     this.initialRightId,
+    this.figure = 'male',
   });
 
   final List<Meridian> meridians;
   final List<Acupoint> acupoints;
   final String? initialLeftId;
   final String? initialRightId;
+  final String figure;
 
   /// 对照表的行：标签 + 两侧取值。纯函数，便于测试。
   static List<(String, String, String)> comparisonRows(
@@ -29,7 +31,7 @@ class MeridianComparePage extends StatefulWidget {
   ) {
     String group(Meridian m) => switch (m.group) { 'hand' => '手经', 'foot' => '足经', _ => '奇经' };
     String views(Meridian m) {
-      final set = m.routes.map((r) => r.view).toSet();
+      final set = acupoints.where((p) => p.meridianId == m.id).map((p) => p.view).toSet();
       return [if (set.contains('front')) '正面', if (set.contains('back')) '背面'].join(' / ');
     }
     String pointCount(Meridian m) => '${acupoints.where((p) => p.meridianId == m.id).length}';
@@ -38,8 +40,7 @@ class MeridianComparePage extends StatefulWidget {
       ('拼音', a.pinyin, b.pinyin),
       ('手足分类', group(a), group(b)),
       ('阴阳', a.yinYang, b.yinYang),
-      ('路径段数', '${a.routes.length}', '${b.routes.length}'),
-      ('路径所在面', views(a), views(b)),
+      ('穴位所在面', views(a), views(b)),
       ('已收录穴位', pointCount(a), pointCount(b)),
     ];
   }
@@ -86,8 +87,8 @@ class _MeridianComparePageState extends State<MeridianComparePage>
   Meridian get _left => _byId(_leftId);
   Meridian get _right => _byId(_rightId);
 
-  static bool hasView(Meridian meridian, String view) =>
-      meridian.routes.any((route) => route.view == view);
+  bool hasView(Meridian meridian, String view) =>
+      widget.acupoints.any((p) => p.meridianId == meridian.id && p.view == view);
 
   /// 优先选两条经络都有路径的视图，其次选任一有路径的视图。
   String _preferredView() {
@@ -103,7 +104,7 @@ class _MeridianComparePageState extends State<MeridianComparePage>
   List<Acupoint> _pointsFor(Iterable<String> meridianIds) {
     final ids = meridianIds.toSet();
     return widget.acupoints
-        .where((point) => point.view == _view && ids.contains(point.meridianId))
+        .where((point) => ids.contains(point.meridianId))
         .toList();
   }
 
@@ -283,26 +284,21 @@ class _MeridianComparePageState extends State<MeridianComparePage>
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF172326), Color(0xFF10191C)],
+          colors: [Color(0xFF121619), Color(0xFF121619)],
         ),
       ),
       child: Stack(
         children: [
           Positioned.fill(
-            child: RepaintBoundary(
-              child: AnimatedBuilder(
-                animation: _flowController,
-                builder: (context, _) => MeridianCanvas(
-                  meridians: meridians,
-                  acupoints: _pointsFor(meridians.map((m) => m.id)),
-                  view: _view,
-                  progress: _flowController.value,
-                  reverse: false,
-                  showPoints: _showPoints,
-                  activePointId: null,
-                  onTapDown: (_) {},
-                ),
-              ),
+            child: MeridianCanvas(
+              meridians: meridians,
+              acupoints: _pointsFor(meridians.map((m) => m.id)),
+              view: _view,
+              figure: widget.figure,
+              animation: _flowController,
+              reverse: false,
+              showPoints: _showPoints,
+              activePointId: null,
             ),
           ),
           if (caption != null)
@@ -317,7 +313,7 @@ class _MeridianComparePageState extends State<MeridianComparePage>
               right: 10,
               bottom: 10,
               child: Text(
-                '${meridians.where((m) => !hasView(m, _view)).map((m) => m.nameZh).join('、')}在此面无路径数据',
+                '${meridians.where((m) => !hasView(m, _view)).map((m) => m.nameZh).join('、')}在此面无穴位',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.5)),
               ),
