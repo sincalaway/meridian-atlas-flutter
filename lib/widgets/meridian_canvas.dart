@@ -23,7 +23,7 @@ class MeridianCanvas extends StatefulWidget {
     this.onPointTap,
     this.interactive = true,
     this.atlas,
-    this.labelMinScale = 1.8,
+    this.labelMinScale = 1.5,
     this.transformationController,
   });
 
@@ -97,7 +97,7 @@ class _MeridianCanvasState extends State<MeridianCanvas> {
                 Image.asset(
                   figureView.image,
                   fit: BoxFit.fill,
-                  filterQuality: FilterQuality.medium,
+                  filterQuality: FilterQuality.high,
                   gaplessPlayback: true,
                   errorBuilder: (_, __, ___) => const SizedBox.shrink(),
                 ),
@@ -328,12 +328,39 @@ class _AtlasPainter extends CustomPainter {
         )..layout(),
       );
       for (final pos in p.positionsFor(figure)) {
-        // 标签放在点的右上方；以屏幕像素布局，再换算回图片像素
+        // 依次尝试右上、右、左上、左、正上、正下、右下、左下，选第一个不与已放标签/其他穴位点重叠的位置
         final w = (tp.width + 8) * px;
         final h = (tp.height + 4) * px;
-        final rect = Rect.fromLTWH(pos.dx + 6 * px, pos.dy - h - 2 * px, w, h);
-        if (!isActive && placed.any((r) => r.overlaps(rect))) continue;
+        final gap = 6 * px;
+        final candidates = [
+          Offset(pos.dx + gap, pos.dy - h - 2 * px),
+          Offset(pos.dx + gap, pos.dy - h / 2),
+          Offset(pos.dx - gap - w, pos.dy - h - 2 * px),
+          Offset(pos.dx - gap - w, pos.dy - h / 2),
+          Offset(pos.dx - w / 2, pos.dy - h - gap),
+          Offset(pos.dx - w / 2, pos.dy + gap),
+          Offset(pos.dx + gap, pos.dy + 2 * px),
+          Offset(pos.dx - gap - w, pos.dy + 2 * px),
+        ];
+        Rect? rect;
+        for (final c in candidates) {
+          final r = Rect.fromLTWH(c.dx, c.dy, w, h);
+          if (isActive || !placed.any((o) => o.overlaps(r))) {
+            rect = r;
+            break;
+          }
+        }
+        // 实在放不下（点太密）时仍画在右上方，保证每个穴位都有名字；继续放大即可分开
+        rect ??= Rect.fromLTWH(candidates.first.dx, candidates.first.dy, w, h);
         placed.add(rect);
+        canvas.drawLine(
+          pos,
+          Offset(pos.dx < rect.left ? rect.left : (pos.dx > rect.right ? rect.right : pos.dx),
+              pos.dy < rect.top ? rect.top : (pos.dy > rect.bottom ? rect.bottom : pos.dy)),
+          Paint()
+            ..color = const Color(0x99FFFFFF)
+            ..strokeWidth = 0.8 * px,
+        );
         canvas.drawRRect(
           RRect.fromRectAndRadius(rect, Radius.circular(4 * px)),
           Paint()..color = isActive ? const Color(0xFFFFE08A) : const Color(0xCC0D1719),

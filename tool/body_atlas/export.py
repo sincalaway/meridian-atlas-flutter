@@ -13,7 +13,13 @@ for image in lm.IMAGES:
     figure, view = image.split('_')
     im = Image.open(image + '.png').convert('RGB')
     rel = f'assets/body/{figure}_{view}.jpg'
-    im.save(os.path.join(repo, rel), quality=90, optimize=True, progressive=True)
+    # 高清底图：优先用 Real-ESRGAN x4 超分结果（upscale.py），缩到 3 倍（2544×3792）导出；
+    # 坐标仍以原图尺寸（848×1264）为坐标系，App 按比例铺满。
+    hd = image + '_x4.png'
+    out_im = Image.open(hd).convert('RGB') if os.path.exists(hd) else im
+    if out_im is not im:
+        out_im = out_im.resize((im.width * 3, im.height * 3), Image.LANCZOS)
+    out_im.save(os.path.join(repo, rel), quality=86, optimize=True, progressive=True)
     figures.setdefault(figure, {})[view] = {'image': rel, 'width': im.width, 'height': im.height}
     out, errs = pts.evaluate(image)
     problems += errs

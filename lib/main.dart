@@ -278,8 +278,8 @@ class _MeridianHomePageState extends State<MeridianHomePage>
         meridian: meridian,
         acupoints: widget.acupoints.where((p) => p.meridianId == meridian.id).toList(),
         figure: _figure,
-        isFavorite: _favoritePointIds.contains(point.id),
-        onFavoriteToggle: () => _toggleFavorite(point),
+        isFavorite: (p) => _favoritePointIds.contains(p.id),
+        onFavoriteToggle: _toggleFavorite,
         onOpenMeridian: () {
           Navigator.of(context).pop();
           _openMeridianDetail(meridian);

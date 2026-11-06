@@ -8,3 +8,8 @@
 4. `python3 export.py ../..` 写入 App 资源。
 
 位置为学习示意，非精确体表定位。
+
+
+## 高清底图
+
+`python3 upscale.py male_front male_back female_front female_back` 用 Real-ESRGAN x4plus（BSD-3-Clause，需 torch 与 spandrel，权重从 xinntao/Real-ESRGAN 发布页下载 RealESRGAN_x4plus.pth）把原图放大 4 倍，生成 `*_x4.png`；`export.py` 检测到后缩至 3 倍（2544×3792）导出。穴位坐标仍以 848×1264 为坐标系。
