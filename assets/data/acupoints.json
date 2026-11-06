@@ -630,7 +630,7 @@
       "x": 358.0,
       "y": 449.1
     },
-    "location": "臂外侧，曲池上方1寸，肱骨外上髁外缘",
+    "location": "肘后外侧，肱骨外上髁上缘，髁上嵴的前缘",
     "indications": [
       "肘臂疼痛、挛急、麻木",
       "上肢不遂",
@@ -643,7 +643,7 @@
     ],
     "specialCategories": [],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-17。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-17。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.2.12 修订。"
   },
   {
     "id": "LI13",
@@ -682,7 +682,7 @@
       "x": 384.4,
       "y": 401.7
     },
-    "location": "臂外侧，三角肌下端，曲池上7寸处",
+    "location": "臂外侧，曲池（LI11）与肩髃（LI15）连线上，三角肌前缘处，约曲池上7寸",
     "indications": [
       "肩臂疼痛、上肢不遂",
       "瘰疬",
@@ -697,7 +697,7 @@
       "手阳明与手少阳交会穴"
     ],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-17。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-17。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.2.14 修订。"
   },
   {
     "id": "LI15",
@@ -766,7 +766,7 @@
       "x": 430.4,
       "y": 333.9
     },
-    "location": "颈外侧部，胸锁乳突肌后缘，扶突穴下1寸处",
+    "location": "颈前部，横平环状软骨，胸锁乳突肌后缘；扶突（LI18）直下",
     "indications": [
       "咽喉肿痛、吞咽困难",
       "瘰疬、瘿气",
@@ -779,7 +779,7 @@
     ],
     "specialCategories": [],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-17。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-17。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.2.17 修订。"
   },
   {
     "id": "LI18",
@@ -1974,7 +1974,7 @@
       "x": 633.9,
       "y": 1275.6
     },
-    "location": "小腿前外侧，外踝尖上8寸，条口外1寸，胫骨前嵴外二横指处",
+    "location": "小腿外侧，外踝尖上8寸，胫骨前肌外缘；条口（ST38）外侧一横指",
     "indications": [
       "痰多咳嗽、眩晕",
       "癫狂",
@@ -1989,7 +1989,7 @@
       "络穴"
     ],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-17。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-17。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.3.40 修订。"
   },
   {
     "id": "ST41",
@@ -3088,7 +3088,7 @@
       "x": 326.6,
       "y": 681.8
     },
-    "location": "手掌尺侧，第五掌骨基底与钩骨之间凹陷中，赤白肉际处",
+    "location": "腕后内侧，第5掌骨底与三角骨之间的赤白肉际凹陷中",
     "indications": [
       "黄疸",
       "头痛、项强、耳鸣",
@@ -3103,7 +3103,7 @@
       "原穴"
     ],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.6.4 修订。"
   },
   {
     "id": "SI5",
@@ -3143,7 +3143,7 @@
       "x": 337.8,
       "y": 623.5
     },
-    "location": "前臂背面尺侧，尺骨茎突桡侧骨缝凹陷中",
+    "location": "前臂后侧，腕背横纹上1寸，尺骨头桡侧凹陷中",
     "indications": [
       "目视不明",
       "肩背肘臂酸痛",
@@ -3157,7 +3157,7 @@
       "郄穴"
     ],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.6.6 修订。"
   },
   {
     "id": "SI7",
@@ -3282,7 +3282,7 @@
       "x": 370.3,
       "y": 478.9
     },
-    "location": "肩胛骨冈下窝中央凹陷中，约肩胛冈下缘与肩胛骨下角连线上1/3处",
+    "location": "肩胛区，肩胛冈中点与肩胛骨下角连线的上1/3与下2/3交点凹陷中",
     "indications": [
       "肩胛疼痛、肩周炎",
       "上肢不遂",
@@ -3294,7 +3294,7 @@
     ],
     "specialCategories": [],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.6.11 修订。"
   },
   {
     "id": "SI12",
@@ -3788,7 +3788,7 @@
       "x": 457.3,
       "y": 412.0
     },
-    "location": "项部，后发际正中直上0.5寸（哑门穴）旁开1.3寸，斜方肌外缘凹陷中",
+    "location": "颈后部，横平第2颈椎棘突上际，斜方肌外缘凹陷中",
     "indications": [
       "头痛、项强、眩晕",
       "目痛、鼻塞",
@@ -3800,7 +3800,7 @@
     ],
     "specialCategories": [],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.7.10 修订。"
   },
   {
     "id": "BL11",
@@ -5057,7 +5057,7 @@
       "x": 415.4,
       "y": 1182.2
     },
-    "location": "骶部，第四骶椎棘突下旁开3寸",
+    "location": "臀部，横平第4骶后孔，骶正中嵴旁开3寸",
     "indications": [
       "腰骶痛、坐骨神经痛",
       "下肢痿痹",
@@ -5069,7 +5069,7 @@
     ],
     "specialCategories": [],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.7.54 修订。"
   },
   {
     "id": "BL55",
@@ -5473,7 +5473,7 @@
       "x": 610.0,
       "y": 1410.0
     },
-    "location": "足底部，蜷足时足前部凹陷处，约当足底2、3趾趾缝纹头端与足跟连线的前三分之一与后三分之二交点上",
+    "location": "足底，屈足卷趾时足心最凹陷处",
     "indications": [
       "尸厥，中暑昏迷",
       "癫狂痫",
@@ -5490,7 +5490,7 @@
       "井穴"
     ],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-08。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-08。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.8.1 修订。"
   },
   {
     "id": "KI2",
@@ -5615,7 +5615,7 @@
       "x": 572.0,
       "y": 1221.8
     },
-    "location": "足内侧，内踝尖下方凹陷中",
+    "location": "足内侧，内踝尖下1寸，内踝下缘边际凹陷中",
     "indications": [
       "咽喉干痛",
       "失眠（阴跷脉病）",
@@ -5632,7 +5632,7 @@
       "八脉交会穴（通阴跷脉）"
     ],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.8.6 修订。"
   },
   {
     "id": "KI7",
@@ -5731,7 +5731,7 @@
       "x": 546.7,
       "y": 1070.3
     },
-    "location": "腘窝内侧，半腱肌肌腱与半膜肌肌腱之间",
+    "location": "膝后内侧，腘横纹上，半腱肌肌腱外侧缘",
     "indications": [
       "遗精、阳痿",
       "小便不利、小腹胀痛",
@@ -5746,7 +5746,7 @@
       "合穴"
     ],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.8.10 修订。"
   },
   {
     "id": "KI11",
@@ -6812,7 +6812,7 @@
       "x": 401.1,
       "y": 480.8
     },
-    "location": "在臂后区，肩峰角下3寸，三角肌的后下缘",
+    "location": "臂后侧，尺骨鹰嘴尖与肩峰角连线上，与三角肌后缘相交处",
     "indications": [
       "瘿气",
       "瘰疬",
@@ -6827,7 +6827,7 @@
       "三焦经的经穴，位于三角肌止点附近"
     ],
     "cautions": "",
-    "source": "AcuAtlas 开放数据（acupointatlas.com，CC BY 4.0），英文原文由本项目译为中文（AI 辅助翻译，2026-11-06 对照英文逐条修订）；AcuAtlas 定位以 WHO《西太平洋地区标准针灸穴位定位》（2008）为准。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "AcuAtlas 开放数据（acupointatlas.com，CC BY 4.0），英文原文由本项目译为中文（AI 辅助翻译，2026-11-06 对照英文逐条修订）；AcuAtlas 定位以 WHO《西太平洋地区标准针灸穴位定位》（2008）为准。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.10.13 修订。"
   },
   {
     "id": "TE14",
@@ -7004,7 +7004,7 @@
       "x": 459.7,
       "y": 324.8
     },
-    "location": "在头部，耳尖正上方，折耳向前时耳尖所触及处",
+    "location": "头部，耳尖正对发际处",
     "indications": [
       "痄腮",
       "齿痛",
@@ -7020,7 +7020,7 @@
       "手足少阳与手阳明交会穴"
     ],
     "cautions": "在此头皮穴位不宜直接瘢痕灸，与SJ-16至SJ-23安全性列表一致。",
-    "source": "AcuAtlas 开放数据（acupointatlas.com，CC BY 4.0），英文原文由本项目译为中文（AI 辅助翻译，2026-11-06 对照英文逐条修订）；AcuAtlas 定位以 WHO《西太平洋地区标准针灸穴位定位》（2008）为准。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "AcuAtlas 开放数据（acupointatlas.com，CC BY 4.0），英文原文由本项目译为中文（AI 辅助翻译，2026-11-06 对照英文逐条修订）；AcuAtlas 定位以 WHO《西太平洋地区标准针灸穴位定位》（2008）为准。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.10.20 修订。"
   },
   {
     "id": "TE21",
@@ -7838,7 +7838,7 @@
       "x": 696.3,
       "y": 890.2
     },
-    "location": "侧腹部，章门穴下方，当第十一肋骨游离端下缘与脐水平线的交点处",
+    "location": "侧腹部，第11肋骨游离端垂线与脐水平线的交点",
     "indications": [
       "月经不调、赤白带下",
       "疝气、腰腹痛",
@@ -7853,7 +7853,7 @@
       "足少阳与带脉交会穴"
     ],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.11.26 修订。"
   },
   {
     "id": "GB27",
@@ -8034,7 +8034,7 @@
       "x": 681.7,
       "y": 1088.9
     },
-    "location": "膝外侧，阳陵泉上3寸，股骨外上髁上方凹陷中",
+    "location": "膝外侧，股骨外上髁后上缘，股二头肌腱与髂胫束之间的凹陷中",
     "indications": [
       "膝关节疼痛、肿胀、屈伸不利",
       "腘筋挛急",
@@ -8047,7 +8047,7 @@
     ],
     "specialCategories": [],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.11.33 修订。"
   },
   {
     "id": "GB34",
@@ -8578,7 +8578,7 @@
       "x": 558.3,
       "y": 874.0
     },
-    "location": "膝内侧，屈膝时，当膝关节内侧端，股骨内上髁后缘，半腱肌、半膜肌止端前缘凹陷中",
+    "location": "膝内侧，腘横纹内侧端，半腱肌肌腱内缘凹陷中",
     "indications": [
       "小便不利、淋证",
       "月经不调、带下、阴痒",
@@ -8594,7 +8594,7 @@
       "合穴"
     ],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.12.8 修订。"
   },
   {
     "id": "LR9",
@@ -9173,7 +9173,7 @@
       "络穴"
     ],
     "cautions": "不可深刺，防止刺伤肝脏。",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.13.15 修订。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.14.15 修订。"
   },
   {
     "id": "CV16",
@@ -9823,7 +9823,7 @@
       "x": 500.0,
       "y": 816.3
     },
-    "location": "项部，后正中线上，第一颈椎（寰椎）棘突下凹陷中，后发际正中直上0.5寸",
+    "location": "颈后部，后正中线上，第2颈椎棘突上际凹陷中；后发际正中直上0.5寸",
     "indications": [
       "暴喑、舌强不语、聋哑",
       "癫狂、癫痫",
@@ -9838,7 +9838,7 @@
       "督脉与阳维脉交会穴"
     ],
     "cautions": "严禁深刺或向上斜刺，针尖朝向下颌方向，深度不超过1寸。深部为延髓，误刺可致生命危险。禁灸。",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.13.15 修订。"
   },
   {
     "id": "GV16",
