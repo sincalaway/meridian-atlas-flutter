@@ -530,6 +530,11 @@ def _():
     return _scalp_front(0.5)
 
 
+@point('GV24+', 'front', mid=True)   # 印堂: GB/T 12346-2021 归督脉, 两眉毛内侧端中间 (左右攒竹连线中点)
+def _():
+    return lerp(L('brow_in_R'), L('brow_in_L'), 0.5)
+
+
 @point('GV25', 'front', mid=True)
 def _():
     return up(L('nose_tip'), 1, 1.0)

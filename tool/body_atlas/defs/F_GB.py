@@ -337,14 +337,14 @@ def _thigh_edge(s, cun_above_knee, inset_cun=0.5):
     return inside_edge(y, s, L('knee', s)[0], inset_cun * U('thigh', s))
 
 
-@point('GB31', 'front')       # 风市: 大腿外侧正中, 腘横纹上7寸
+@point('GB31', 'front')       # 风市: GB/T 12346-2021 腘横纹上9寸, 髂胫束后缘
+def _(s):
+    return _thigh_edge(s, 9, 0.45)
+
+
+@point('GB32', 'front')       # 中渎: GB/T 12346-2021 腘横纹上7寸, 髂胫束后缘
 def _(s):
     return _thigh_edge(s, 7, 0.45)
-
-
-@point('GB32', 'front')       # 中渎: 腘横纹上5寸, 髂胫束后缘 (WHO 5寸; task text repeats 7寸)
-def _(s):
-    return _thigh_edge(s, 5, 0.45)
 
 
 def _gb34(s):

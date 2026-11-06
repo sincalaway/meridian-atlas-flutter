@@ -52,9 +52,11 @@ class _MeridianDetailPageState extends State<MeridianDetailPage>
     return points;
   }
 
-  static int _codeNumber(String code) {
-    final match = RegExp(r'(\d+)').firstMatch(code);
-    return match == null ? 0 : int.parse(match.group(1)!);
+  /// 穴序号；国标新增穴（如印堂 GV24+）排在 GV24 之后、GV25 之前。
+  static double _codeNumber(String code) {
+    final match = RegExp(r'(\d+)(\+?)').firstMatch(code);
+    if (match == null) return 0;
+    return int.parse(match.group(1)!) + (match.group(2)!.isEmpty ? 0 : 0.5);
   }
 
   @override

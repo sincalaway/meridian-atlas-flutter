@@ -7981,7 +7981,7 @@
       "x": 687.7,
       "y": 1032.3
     },
-    "location": "大腿外侧正中，腘横纹上7寸；直立垂手时，中指尖所及处",
+    "location": "股外侧，腘横纹上9寸，髂胫束后缘；直立垂手、掌心贴于大腿时，中指尖所指凹陷中",
     "indications": [
       "下肢痿痹、半身不遂",
       "遍身瘙痒、荨麻疹",
@@ -7994,7 +7994,7 @@
     ],
     "specialCategories": [],
     "cautions": "",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.11.31 修订。"
   },
   {
     "id": "GB32",
@@ -9158,7 +9158,7 @@
       "x": 500.0,
       "y": 713.0
     },
-    "location": "上腹部，前正中线上，脐中上7寸，剑突下0.5寸",
+    "location": "上腹部，前正中线上，剑胸结合下1寸",
     "indications": [
       "胸闷、心痛、心悸",
       "癫狂、癫痫",
@@ -9173,7 +9173,7 @@
       "络穴"
     ],
     "cautions": "不可深刺，防止刺伤肝脏。",
-    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+    "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。定位按 GB/T 12346-2021《经穴名称与定位》 5.13.15 修订。"
   },
   {
     "id": "CV16",
@@ -10084,6 +10084,24 @@
     ],
     "cautions": "",
     "source": "本草典开放数据 v1（本草典编辑部 / Bencaodian Editorial，CC BY-SA 4.0）；功效与主治原注出处：Deadman《A Manual of Acupuncture》第 2 版；编辑审校：2026-04-16。图上位置为按穴序沿示意路径排布，非真实定位。"
+  },
+  {
+    "id": "GV24+",
+    "nameZh": "印堂",
+    "pinyin": "Yìntáng",
+    "code": "GV24+",
+    "meridianId": "DU",
+    "view": "front",
+    "coordinate": {
+      "x": 500.0,
+      "y": 434.6
+    },
+    "location": "头部，两眉毛内侧端中间的凹陷中，即左右攒竹（BL2）连线的中点",
+    "indications": [],
+    "efficacyTags": [],
+    "specialCategories": [],
+    "cautions": "",
+    "source": "定位：GB/T 12346-2021《经穴名称与定位》 5.13.25（2021 版将印堂由经外奇穴归入督脉，编号 GV24+）。功效与主治暂未收录。"
   },
   {
     "id": "GV25",

@@ -238,9 +238,11 @@ class _AtlasPainter extends CustomPainter {
   /// 穴序相邻但循行要经过前面某穴：秩边（BL54）下行经委中（BL40）与第一侧线会合，再到合阳（BL55）。
   static const _via = {'BL55': 'BL40'};
 
-  static int _codeNumber(String code) {
-    final match = RegExp(r'(\d+)').firstMatch(code);
-    return match == null ? 0 : int.parse(match.group(1)!);
+  /// 穴序号；国标新增穴（如印堂 GV24+）排在 GV24 之后、GV25 之前。
+  static double _codeNumber(String code) {
+    final match = RegExp(r'(\d+)(\+?)').firstMatch(code);
+    if (match == null) return 0;
+    return int.parse(match.group(1)!) + (match.group(2)!.isEmpty ? 0 : 0.5);
   }
 
   /// 每条经络在本视图内的连线段：同侧、穴序连续且都在本视图的穴位连成一段。
