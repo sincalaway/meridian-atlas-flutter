@@ -225,6 +225,7 @@ class _MeridianDetailPageState extends State<MeridianDetailPage>
               child: Text(_view == 'front' ? '正面示意' : '背面示意',
                   style: const TextStyle(fontSize: 11, color: Color(0xFFB7C9C1))),
             ),
+          const Positioned(left: 10, bottom: 10, child: MeridianLineLegend()),
           Positioned(
             right: 10,
             bottom: 10,

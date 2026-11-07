@@ -472,3 +472,62 @@ class _AtlasPainter extends CustomPainter {
         old.allPoints != allPoints;
   }
 }
+
+/// 图例：说明经络实线与虚线的含义。
+class MeridianLineLegend extends StatelessWidget {
+  const MeridianLineLegend({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final style = TextStyle(
+        fontSize: 10, color: Colors.white.withOpacity(0.75), height: 1.3);
+    Widget row(bool dashed, String text) =>
+        Row(mainAxisSize: MainAxisSize.min, children: [
+          CustomPaint(
+              size: const Size(22, 8), painter: _LegendLinePainter(dashed)),
+          const SizedBox(width: 6),
+          Text(text, style: style),
+        ]);
+    return IgnorePointer(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.45),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              row(false, '实线：本面相邻穴位相连'),
+              const SizedBox(height: 3),
+              row(true, '虚线：中间穴位在另一面，跨面接续'),
+            ]),
+      ),
+    );
+  }
+}
+
+class _LegendLinePainter extends CustomPainter {
+  _LegendLinePainter(this.dashed);
+  final bool dashed;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()
+      ..color = const Color(0xFFE6F0EC)
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+    final y = size.height / 2;
+    if (!dashed) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), p);
+      return;
+    }
+    for (var x = 0.0; x < size.width; x += 7) {
+      canvas.drawLine(Offset(x, y), Offset(math.min(x + 4, size.width), y), p);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_LegendLinePainter old) => old.dashed != dashed;
+}

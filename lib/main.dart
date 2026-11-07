@@ -508,6 +508,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
               ),
             ),
           ),
+          if (selected.isNotEmpty) const Positioned(left: 12, bottom: 34, child: MeridianLineLegend()),
           Positioned(
             left: 14,
             bottom: 13,
@@ -832,7 +833,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
           SizedBox(width: 9),
           Expanded(
             child: Text(
-              '人体底图为 AI 生成的写实示意图；穴位位置按骨度分寸由体表标志推算，经络线按穴序连接，均为学习示意，尚未完成专业校勘，不用于诊断、治疗或实际操作指导。',
+              '人体底图为 AI 生成的写实示意图；穴位位置按骨度分寸由体表标志推算，经络线按穴序连接（实线连同一面相邻的穴位，虚线表示中间穴位在另一面、跨面接续），均为学习示意，尚未完成专业校勘，不用于诊断、治疗或实际操作指导。',
               style: TextStyle(fontSize: 10, height: 1.5, color: Color(0xFFC6B98F)),
             ),
           ),
@@ -968,7 +969,9 @@ class _FullscreenAtlasPageState extends State<_FullscreenAtlasPage> {
         ],
       ),
       body: SafeArea(
-        child: MeridianCanvas(
+        child: Stack(children: [
+          Positioned.fill(
+            child: MeridianCanvas(
           meridians: widget.meridians,
           acupoints: widget.acupoints,
           view: _view,
@@ -981,7 +984,10 @@ class _FullscreenAtlasPageState extends State<_FullscreenAtlasPage> {
             setState(() => _active = p.id);
             widget.onPointTap(p);
           },
-        ),
+            ),
+          ),
+          const Positioned(left: 12, bottom: 12, child: MeridianLineLegend()),
+        ]),
       ),
     );
   }

@@ -144,6 +144,7 @@ class _AcupointDetailPageState extends State<AcupointDetailPage> with SingleTick
                       );
                     }),
                   ),
+                  const Positioned(left: 10, top: 10, child: MeridianLineLegend()),
                   Positioned(
                     left: 12,
                     bottom: 10,
