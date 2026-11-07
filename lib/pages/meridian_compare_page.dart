@@ -158,6 +158,8 @@ class _MeridianComparePageState extends State<MeridianComparePage>
             _buildToolbar(),
             const SizedBox(height: 12),
             _layout == CompareLayout.sideBySide ? _buildSideBySide() : _buildOverlay(),
+            const SizedBox(height: 8),
+            const Align(alignment: Alignment.centerLeft, child: MeridianLineLegend()),
             const SizedBox(height: 22),
             const Text('属性对照', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
             const SizedBox(height: 10),
