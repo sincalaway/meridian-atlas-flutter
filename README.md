@@ -12,6 +12,7 @@
 - 穴位可加入本机收藏，收藏列表通过 `shared_preferences` 在应用重启后保留。
 - 使用 `AnimationController` + `CustomPainter` 绘制循环流动粒子；可暂停、重置、调速和切换流动方向。
 - 基础设置支持跟随系统/浅色/深色主题、默认人体底图与正背面、首页动画开关；首次启动提供三步交互引导，设置页可重看。
+- 穴位与经络练习：每组默认 10 题，随机练习穴位所属经络、经络代码、穴位代码对应名称；答案和选项只从本地现有经络名、穴位名、代码及 `meridianId` 关系生成，不使用功效、主治或临床判断字段。答题后即时反馈并统计成绩，可再练一组。
 - 经络详情页：单经流动演示（正/背面切换、暂停、反向）、说明与出处、相关穴位列表；点选穴位返回首页并定位。可从「查看经络详情」或穴位卡片进入。
 - 收录 362 个经穴记录（按 GB/T 12346-2021《经穴名称与定位》，含 2021 版归入督脉的印堂 GV24+）：208 个来自「本草典」开放数据（CC BY-SA 4.0），153 个来自 AcuAtlas 开放数据（CC BY 4.0，英文原文经 AI 辅助译为中文，并已对照英文逐条修订），详见 `assets/data/ATTRIBUTION.md`。GV24+ 尚未收录功效与主治；其他记录仍以各自来源字段和授权说明为准。点选可查看名称、拼音、国际代码、特定穴分类、定位、功效、主治、注意事项与出处。
 - 所有数据由 `assets/data/*.json` 本地加载，预留来源字段。
@@ -67,7 +68,7 @@ bash tool/bootstrap_platforms.sh   # 首次运行：生成 Android/iOS 原生目
 flutter run
 ```
 
-初始化脚本会在临时目录生成 Flutter 原生模板，只把 `android/`、`ios/` 复制到当前工程，不覆盖 Dart 源码或项目配置；如平台目录已经存在，脚本会停止以避免覆盖。也可在已有原生目录的项目中直接执行 `flutter pub get` 和 `flutter run`。已用 Flutter 3.24.5 通过 `flutter analyze` 与 `flutter test`；测试包含设置偏好、首次引导、详情/对比、穴位点选与数据检查。尚未做真机构建验证；除 Flutter SDK 外，项目依赖 `shared_preferences`。
+初始化脚本会在临时目录生成 Flutter 原生模板，只把 `android/`、`ios/` 复制到当前工程，不覆盖 Dart 源码或项目配置；如平台目录已经存在，脚本会停止以避免覆盖。也可在已有原生目录的项目中直接执行 `flutter pub get` 和 `flutter run`。已用 Flutter 3.24.5 通过 `flutter analyze` 与 `flutter test`；测试包含设置偏好、首次引导、详情/对比、穴位点选、练习题数据来源与答题流程。尚未做真机构建验证；除 Flutter SDK 外，项目依赖 `shared_preferences`。
 
 ## 目录
 
@@ -76,6 +77,8 @@ lib/
   main.dart                         # 首屏与交互
   data/meridian_repository.dart     # JSON 加载
   models/meridian.dart              # 经络、路线、穴位模型
+  models/study_quiz.dart            # 本地数据驱动的练习题生成
+  pages/study_quiz_page.dart        # 答题、反馈与成绩页面
   widgets/acupoint_search_panel.dart # 穴位搜索、筛选与收藏列表
   widgets/meridian_canvas.dart      # 人体/路径/粒子绘制
 assets/data/

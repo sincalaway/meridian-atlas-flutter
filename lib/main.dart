@@ -12,6 +12,7 @@ import 'pages/acupoint_detail_page.dart';
 import 'pages/meridian_compare_page.dart';
 import 'pages/meridian_detail_page.dart';
 import 'pages/settings_page.dart';
+import 'pages/study_quiz_page.dart';
 import 'theme/atlas_theme.dart';
 import 'widgets/acupoint_search_panel.dart';
 import 'widgets/first_run_guide.dart';
@@ -282,6 +283,18 @@ class _MeridianHomePageState extends State<MeridianHomePage>
         animationsEnabled: _playing,
         onAnimationsChanged: _changeAnimationPreference,
         onReplayGuide: () => _showOnboarding(force: true),
+      ),
+    ));
+    _resumeHomeAnimation();
+  }
+
+  Future<void> _openStudyQuiz() async {
+    HapticFeedback.selectionClick();
+    _flowController.stop();
+    await Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => StudyQuizPage(
+        meridians: widget.meridians,
+        acupoints: widget.acupoints,
       ),
     ));
     _resumeHomeAnimation();
@@ -610,19 +623,15 @@ class _MeridianHomePageState extends State<MeridianHomePage>
           ],
         ),
         const Spacer(),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-          decoration: BoxDecoration(
-            color: palette.surfaceMuted,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: palette.border),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.school_outlined, size: 14, color: palette.accent),
-              SizedBox(width: 5),
-              Text('学习模式', style: TextStyle(fontSize: 11)),
-            ],
+        TextButton.icon(
+          key: const Key('open_study_quiz'),
+          onPressed: _openStudyQuiz,
+          icon: Icon(Icons.quiz_outlined, size: 16, color: palette.accent),
+          label: Text('练习', style: TextStyle(fontSize: 12)),
+          style: TextButton.styleFrom(
+            foregroundColor: palette.accent,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            visualDensity: VisualDensity.compact,
           ),
         ),
         const SizedBox(width: 4),

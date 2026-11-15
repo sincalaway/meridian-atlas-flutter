@@ -45,4 +45,19 @@ void main() {
     expect(find.text('主题'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('首页练习入口可打开练习题', (tester) async {
+    SharedPreferences.setMockInitialValues({'atlas_has_seen_onboarding': true});
+    await tester.pumpWidget(MaterialApp(
+      theme: AtlasThemes.light(),
+      darkTheme: AtlasThemes.dark(),
+      home: MeridianHomePage(meridians: meridians, acupoints: acupoints),
+    ));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    await tester.tap(find.byKey(const Key('open_study_quiz')));
+    await tester.pumpAndSettle();
+    expect(find.text('第 1 / 10 题'), findsOneWidget);
+  });
 }
