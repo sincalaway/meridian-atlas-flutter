@@ -53,7 +53,8 @@ class _MeridianCanvasState extends State<MeridianCanvas> {
   TransformationController? _ownController;
 
   TransformationController get _controller =>
-      widget.transformationController ?? (_ownController ??= TransformationController());
+      widget.transformationController ??
+      (_ownController ??= TransformationController());
 
   @override
   void dispose() {
@@ -77,11 +78,13 @@ class _MeridianCanvasState extends State<MeridianCanvas> {
     return LayoutBuilder(builder: (context, constraints) {
       final imgW = figureView?.width ?? 848;
       final imgH = figureView?.height ?? 1264;
-      final fit = math.min(constraints.maxWidth / imgW, constraints.maxHeight / imgH);
+      final fit =
+          math.min(constraints.maxWidth / imgW, constraints.maxHeight / imgH);
       final w = imgW * fit;
       final h = imgH * fit;
       final points = widget.acupoints
-          .where((p) => p.view == widget.view && p.positionsFor(widget.figure).isNotEmpty)
+          .where((p) =>
+              p.view == widget.view && p.positionsFor(widget.figure).isNotEmpty)
           .toList(growable: false);
 
       final content = SizedBox(
@@ -89,7 +92,8 @@ class _MeridianCanvasState extends State<MeridianCanvas> {
         height: h,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTapUp: (details) => _handleTap(details.localPosition / fit, points, fit),
+          onTapUp: (details) =>
+              _handleTap(details.localPosition / fit, points, fit),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -97,7 +101,7 @@ class _MeridianCanvasState extends State<MeridianCanvas> {
                 Image.asset(
                   figureView.image,
                   fit: BoxFit.fill,
-                  filterQuality: FilterQuality.high,
+                  filterQuality: FilterQuality.medium,
                   gaplessPlayback: true,
                   errorBuilder: (_, __, ___) => const SizedBox.shrink(),
                 ),
@@ -110,6 +114,8 @@ class _MeridianCanvasState extends State<MeridianCanvas> {
                     fit: fit,
                     figure: widget.figure,
                     view: widget.view,
+                    routeScaleX: imgW / 1000,
+                    routeScaleY: imgH / 1600,
                     meridians: widget.meridians,
                     allPoints: widget.acupoints,
                     points: points,
@@ -167,6 +173,8 @@ class _AtlasPainter extends CustomPainter {
     required this.fit,
     required this.figure,
     required this.view,
+    required this.routeScaleX,
+    required this.routeScaleY,
     required this.meridians,
     required this.allPoints,
     required this.points,
@@ -181,6 +189,8 @@ class _AtlasPainter extends CustomPainter {
   final double fit;
   final String figure;
   final String view;
+  final double routeScaleX;
+  final double routeScaleY;
   final List<Meridian> meridians;
   final List<Acupoint> allPoints;
   final List<Acupoint> points;
@@ -192,11 +202,40 @@ class _AtlasPainter extends CustomPainter {
   static final Map<String, TextPainter> _labelCache = {};
 
   // 连线与路径度量在画家实例内缓存；动画/缩放触发的重绘只更新粒子位置与线宽。
-  late final List<(Color, Path, List<PathMetric>)> _paths = [
-    for (final meridian in meridians)
-      for (final run in _runs(meridian))
-        (meridian.color, _smooth(run), _smooth(run).computeMetrics().toList(growable: false)),
+  late final List<(Color, bool, Path, List<PathMetric>)> _paths = [
+    for (final meridian in meridians) ..._pathsFor(meridian),
   ];
+
+  List<(Color, bool, Path, List<PathMetric>)> _pathsFor(Meridian meridian) {
+    final runs = _runs(meridian);
+    if (runs.isNotEmpty) {
+      return [for (final run in runs) _pathRecord(meridian, run)];
+    }
+    // routes 使用旧版 1000×1600 示意坐标；仅在缺少可绘制穴位连线时回退，
+    // 不把预置演示线路与按底图定位生成的线路叠加。
+    return [
+      for (final route in meridian.routes.where((route) => route.view == view))
+        if (route.points.length > 1)
+          _pathRecord(
+            meridian,
+            [
+              for (final point in route.points)
+                Offset(point.dx * routeScaleX, point.dy * routeScaleY),
+            ],
+          ),
+    ];
+  }
+
+  (Color, bool, Path, List<PathMetric>) _pathRecord(
+      Meridian meridian, List<Offset> run) {
+    final path = _smooth(run);
+    return (
+      meridian.color,
+      meridian.direction == 'reverse',
+      path,
+      path.computeMetrics().toList(growable: false),
+    );
+  }
 
   /// 跨视图的「过渡」虚线：两穴都在本视图，但中间隔了 1–3 个位于另一面的穴位
   /// （如大肠经 臂臑 → 肩髃（正面）→ 巨骨），最多跨 3 穴，用虚线表示经络绕到另一面再回来。
@@ -266,7 +305,8 @@ class _AtlasPainter extends CustomPainter {
         }
         final viaCode = _via[p.code];
         if (viaCode != null && current.isNotEmpty) {
-          final via = seq.where((q) => q.code == viaCode && q.view == view).firstOrNull;
+          final via =
+              seq.where((q) => q.code == viaCode && q.view == view).firstOrNull;
           final vp = via?.positionsFor(figure) ?? const <Offset>[];
           if (vp.isNotEmpty) current.add(vp[math.min(side, vp.length - 1)]);
         }
@@ -316,7 +356,7 @@ class _AtlasPainter extends CustomPainter {
       }
     }
 
-    for (final (color, path, metrics) in _paths) {
+    for (final (color, routeReverse, path, metrics) in _paths) {
       canvas.drawPath(
         path,
         Paint()
@@ -335,7 +375,7 @@ class _AtlasPainter extends CustomPainter {
           ..strokeCap = StrokeCap.round
           ..strokeJoin = StrokeJoin.round,
       );
-      _drawFlow(canvas, metrics, color, px);
+      _drawFlow(canvas, metrics, color, px, reverse != routeReverse);
     }
 
     if (showPoints) {
@@ -348,14 +388,18 @@ class _AtlasPainter extends CustomPainter {
         }
         final c = colorOf[p.meridianId] ?? Colors.white;
         for (final pos in p.positionsFor(figure)) {
-          canvas.drawCircle(pos, 4.2 * px, Paint()..color = const Color(0xFF0E1A1C).withOpacity(0.85));
-          canvas.drawCircle(pos, 3.0 * px, Paint()..color = Color.lerp(c, Colors.white, 0.55)!);
+          canvas.drawCircle(pos, 4.2 * px,
+              Paint()..color = const Color(0xFF0E1A1C).withOpacity(0.85));
+          canvas.drawCircle(pos, 3.0 * px,
+              Paint()..color = Color.lerp(c, Colors.white, 0.55)!);
         }
       }
       if (active != null) {
         for (final pos in active.positionsFor(figure)) {
-          canvas.drawCircle(pos, 14 * px, Paint()..color = const Color(0xFFFFE08A).withOpacity(0.28));
-          canvas.drawCircle(pos, 5.5 * px, Paint()..color = const Color(0xFFFFE08A));
+          canvas.drawCircle(pos, 14 * px,
+              Paint()..color = const Color(0xFFFFE08A).withOpacity(0.28));
+          canvas.drawCircle(
+              pos, 5.5 * px, Paint()..color = const Color(0xFFFFE08A));
           canvas.drawCircle(
               pos,
               5.5 * px,
@@ -387,7 +431,8 @@ class _AtlasPainter extends CustomPainter {
             style: TextStyle(
               fontSize: isActive ? 13 : 11,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-              color: isActive ? const Color(0xFF2A2006) : const Color(0xFFF3F7F4),
+              color:
+                  isActive ? const Color(0xFF2A2006) : const Color(0xFFF3F7F4),
               height: 1.1,
             ),
           ),
@@ -422,15 +467,22 @@ class _AtlasPainter extends CustomPainter {
         placed.add(rect);
         canvas.drawLine(
           pos,
-          Offset(pos.dx < rect.left ? rect.left : (pos.dx > rect.right ? rect.right : pos.dx),
-              pos.dy < rect.top ? rect.top : (pos.dy > rect.bottom ? rect.bottom : pos.dy)),
+          Offset(
+              pos.dx < rect.left
+                  ? rect.left
+                  : (pos.dx > rect.right ? rect.right : pos.dx),
+              pos.dy < rect.top
+                  ? rect.top
+                  : (pos.dy > rect.bottom ? rect.bottom : pos.dy)),
           Paint()
             ..color = const Color(0x99FFFFFF)
             ..strokeWidth = 0.8 * px,
         );
         canvas.drawRRect(
           RRect.fromRectAndRadius(rect, Radius.circular(4 * px)),
-          Paint()..color = isActive ? const Color(0xFFFFE08A) : const Color(0xCC0D1719),
+          Paint()
+            ..color =
+                isActive ? const Color(0xFFFFE08A) : const Color(0xCC0D1719),
         );
         canvas.save();
         canvas.translate(rect.left + 4 * px, rect.top + 2 * px);
@@ -441,7 +493,8 @@ class _AtlasPainter extends CustomPainter {
     }
   }
 
-  void _drawFlow(Canvas canvas, List<PathMetric> metrics, Color color, double px) {
+  void _drawFlow(Canvas canvas, List<PathMetric> metrics, Color color,
+      double px, bool reverse) {
     for (final metric in metrics) {
       final total = metric.length;
       if (total <= 0) continue;
@@ -452,9 +505,11 @@ class _AtlasPainter extends CustomPainter {
         final tangent = metric.getTangentForOffset(unit * total);
         if (tangent == null) continue;
         final pos = tangent.position;
-        canvas.drawCircle(pos, 9 * px, Paint()..color = color.withOpacity(0.18));
+        canvas.drawCircle(
+            pos, 9 * px, Paint()..color = color.withOpacity(0.18));
         canvas.drawCircle(pos, 3.6 * px, Paint()..color = color);
-        canvas.drawCircle(pos, 1.4 * px, Paint()..color = const Color(0xFFF4FBF7));
+        canvas.drawCircle(
+            pos, 1.4 * px, Paint()..color = const Color(0xFFF4FBF7));
       }
     }
   }

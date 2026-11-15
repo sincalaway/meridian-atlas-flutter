@@ -53,7 +53,8 @@ class AcupointSearchPanel extends StatelessWidget {
     for (final point in points) {
       for (final tag in point.efficacyTags) {
         final trimmed = tag.trim();
-        if (trimmed.isEmpty || trimmed.characters.length > maxFilterTagLength) continue;
+        if (trimmed.isEmpty || trimmed.characters.length > maxFilterTagLength)
+          continue;
         counts[trimmed] = (counts[trimmed] ?? 0) + 1;
       }
     }
@@ -101,12 +102,31 @@ class AcupointSearchPanel extends StatelessWidget {
   String _normalize(String value) {
     var normalized = value.toLowerCase();
     const folds = {
-      'ā': 'a', 'á': 'a', 'ǎ': 'a', 'à': 'a',
-      'ē': 'e', 'é': 'e', 'ě': 'e', 'è': 'e',
-      'ī': 'i', 'í': 'i', 'ǐ': 'i', 'ì': 'i',
-      'ō': 'o', 'ó': 'o', 'ǒ': 'o', 'ò': 'o',
-      'ū': 'u', 'ú': 'u', 'ǔ': 'u', 'ù': 'u',
-      'ǖ': 'v', 'ǘ': 'v', 'ǚ': 'v', 'ǜ': 'v', 'ü': 'v',
+      'ā': 'a',
+      'á': 'a',
+      'ǎ': 'a',
+      'à': 'a',
+      'ē': 'e',
+      'é': 'e',
+      'ě': 'e',
+      'è': 'e',
+      'ī': 'i',
+      'í': 'i',
+      'ǐ': 'i',
+      'ì': 'i',
+      'ō': 'o',
+      'ó': 'o',
+      'ǒ': 'o',
+      'ò': 'o',
+      'ū': 'u',
+      'ú': 'u',
+      'ǔ': 'u',
+      'ù': 'u',
+      'ǖ': 'v',
+      'ǘ': 'v',
+      'ǚ': 'v',
+      'ǜ': 'v',
+      'ü': 'v',
       'ḿ': 'm',
     };
     for (final entry in folds.entries) {
@@ -135,7 +155,8 @@ class AcupointSearchPanel extends StatelessWidget {
                 textInputAction: TextInputAction.search,
                 decoration: InputDecoration(
                   hintText: '穴位名、拼音或代码（如合谷、hegu、LI4）',
-                  hintStyle: const TextStyle(fontSize: 12, color: Color(0xFF82928D)),
+                  hintStyle:
+                      const TextStyle(fontSize: 12, color: Color(0xFF82928D)),
                   prefixIcon: const Icon(Icons.search_rounded, size: 20),
                   suffixIcon: query.isEmpty
                       ? null
@@ -169,7 +190,9 @@ class AcupointSearchPanel extends StatelessWidget {
             IconButton.filledTonal(
               tooltip: favoritesOnly ? '显示全部穴位' : '只看收藏',
               onPressed: () => onFavoritesOnlyChanged(!favoritesOnly),
-              icon: Icon(favoritesOnly ? Icons.star_rounded : Icons.star_border_rounded),
+              icon: Icon(favoritesOnly
+                  ? Icons.star_rounded
+                  : Icons.star_border_rounded),
               style: IconButton.styleFrom(
                 foregroundColor: const Color(0xFFD7C27D),
                 backgroundColor: favoritesOnly
@@ -193,7 +216,8 @@ class AcupointSearchPanel extends StatelessWidget {
             prefixIcon: const Icon(Icons.alt_route_rounded, size: 18),
             filled: true,
             fillColor: const Color(0xFF121D20),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: const BorderSide(color: Color(0xFF26383A)),
@@ -230,7 +254,8 @@ class AcupointSearchPanel extends StatelessWidget {
               ),
               const Spacer(),
               Text('${results.length} 个穴位',
-                  style: const TextStyle(fontSize: 10, color: Color(0xFF81968F))),
+                  style:
+                      const TextStyle(fontSize: 10, color: Color(0xFF81968F))),
             ],
           ),
           const SizedBox(height: 7),
@@ -249,9 +274,11 @@ class AcupointSearchPanel extends StatelessWidget {
     final tags = availableEfficacyTags(points);
     final header = Row(
       children: [
-        const Icon(Icons.local_offer_outlined, size: 15, color: Color(0xFF92A69F)),
+        const Icon(Icons.local_offer_outlined,
+            size: 15, color: Color(0xFF92A69F)),
         const SizedBox(width: 6),
-        const Text('按功效筛选', style: TextStyle(fontSize: 11, color: Color(0xFF92A69F))),
+        const Text('按功效筛选',
+            style: TextStyle(fontSize: 11, color: Color(0xFF92A69F))),
         const Spacer(),
         if (selectedEfficacyTags.isNotEmpty && onEfficacyTagsCleared != null)
           TextButton(
@@ -261,7 +288,8 @@ class AcupointSearchPanel extends StatelessWidget {
               foregroundColor: const Color(0xFF9FC9BC),
               padding: const EdgeInsets.symmetric(horizontal: 6),
             ),
-            child: Text('清除（${selectedEfficacyTags.length}）', style: const TextStyle(fontSize: 11)),
+            child: Text('清除（${selectedEfficacyTags.length}）',
+                style: const TextStyle(fontSize: 11)),
           ),
       ],
     );
@@ -271,7 +299,8 @@ class AcupointSearchPanel extends StatelessWidget {
         children: [
           header,
           const SizedBox(height: 6),
-          _emptyState('功效标签尚未录入。需按指定教材核对后填写穴位的 efficacyTags 字段。', Icons.edit_note_rounded),
+          _emptyState('功效标签尚未录入。需按指定教材核对后填写穴位的 efficacyTags 字段。',
+              Icons.edit_note_rounded),
         ],
       );
     }
@@ -310,7 +339,8 @@ class AcupointSearchPanel extends StatelessWidget {
         leading: Container(
           width: 9,
           height: 9,
-          decoration: BoxDecoration(color: meridian.color, shape: BoxShape.circle),
+          decoration:
+              BoxDecoration(color: meridian.color, shape: BoxShape.circle),
         ),
         title: Text(
           '${point.nameZh}  ${point.code}',
@@ -327,7 +357,8 @@ class AcupointSearchPanel extends StatelessWidget {
           onPressed: () => onFavoriteToggle(point),
           icon: Icon(
             isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
-            color: isFavorite ? const Color(0xFFE2C66E) : const Color(0xFF83958F),
+            color:
+                isFavorite ? const Color(0xFFE2C66E) : const Color(0xFF83958F),
             size: 21,
           ),
         ),
@@ -382,10 +413,15 @@ class EfficacyTagPicker extends StatefulWidget {
   }) {
     final key = keyword.trim();
     if (expanded) {
-      return tags.where((tag) => key.isEmpty || tag.contains(key) || selected.contains(tag)).toList();
+      return tags
+          .where((tag) =>
+              key.isEmpty || tag.contains(key) || selected.contains(tag))
+          .toList();
     }
     final top = tags.take(collapsedCount).toSet();
-    return tags.where((tag) => top.contains(tag) || selected.contains(tag)).toList();
+    return tags
+        .where((tag) => top.contains(tag) || selected.contains(tag))
+        .toList();
   }
 
   @override
@@ -416,12 +452,15 @@ class _EfficacyTagPickerState extends State<EfficacyTagPicker> {
             decoration: InputDecoration(
               isDense: true,
               hintText: '过滤功效标签（如 安神、止痛）',
-              hintStyle: const TextStyle(fontSize: 11, color: Color(0xFF6F837D)),
+              hintStyle:
+                  const TextStyle(fontSize: 11, color: Color(0xFF6F837D)),
               prefixIcon: const Icon(Icons.filter_list_rounded, size: 16),
               prefixIconConstraints: const BoxConstraints(minWidth: 32),
               filled: true,
               fillColor: const Color(0xFF121D20),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none),
               contentPadding: const EdgeInsets.symmetric(vertical: 8),
             ),
           ),
@@ -430,7 +469,8 @@ class _EfficacyTagPickerState extends State<EfficacyTagPicker> {
         if (visible.isEmpty)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 6),
-            child: Text('没有匹配的功效标签', style: TextStyle(fontSize: 11, color: Color(0xFF81968F))),
+            child: Text('没有匹配的功效标签',
+                style: TextStyle(fontSize: 11, color: Color(0xFF81968F))),
           )
         else
           Wrap(
@@ -441,11 +481,20 @@ class _EfficacyTagPickerState extends State<EfficacyTagPicker> {
               return FilterChip(
                 label: Text(tag),
                 selected: selected,
-                onSelected: widget.onToggled == null ? null : (_) => widget.onToggled!(tag),
-                labelStyle: TextStyle(fontSize: 11, color: selected ? const Color(0xFFBDECE0) : const Color(0xFFA6B4B1)),
+                onSelected: widget.onToggled == null
+                    ? null
+                    : (_) => widget.onToggled!(tag),
+                labelStyle: TextStyle(
+                    fontSize: 11,
+                    color: selected
+                        ? const Color(0xFFBDECE0)
+                        : const Color(0xFFA6B4B1)),
                 selectedColor: const Color(0xFF1E3734),
                 backgroundColor: const Color(0xFF141F22),
-                side: BorderSide(color: selected ? const Color(0xFF47796D) : const Color(0xFF273539)),
+                side: BorderSide(
+                    color: selected
+                        ? const Color(0xFF47796D)
+                        : const Color(0xFF273539)),
                 showCheckmark: false,
                 visualDensity: VisualDensity.compact,
               );

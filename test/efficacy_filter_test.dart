@@ -27,10 +27,12 @@ void main() {
   ];
 
   test('可用标签按出现次数排序并去空白', () {
-    expect(AcupointSearchPanel.availableEfficacyTags([
-      ...points,
-      _point('4', [' 标签B ', '']),
-    ]), ['标签B', '标签A']);
+    expect(
+        AcupointSearchPanel.availableEfficacyTags([
+          ...points,
+          _point('4', [' 标签B ', '']),
+        ]),
+        ['标签B', '标签A']);
   });
 
   test('超长功效描述不进筛选列表，但仍可命中筛选', () {
@@ -41,9 +43,20 @@ void main() {
   });
 
   test('未选标签时全部通过，选中后按任一命中筛选', () {
-    expect(points.where((p) => AcupointSearchPanel.matchesEfficacy(p, {})).length, 3);
-    expect(points.where((p) => AcupointSearchPanel.matchesEfficacy(p, {'标签A'})).map((p) => p.id), ['1']);
-    expect(points.where((p) => AcupointSearchPanel.matchesEfficacy(p, {'标签A', '标签B'})).map((p) => p.id), ['1', '2']);
+    expect(
+        points.where((p) => AcupointSearchPanel.matchesEfficacy(p, {})).length,
+        3);
+    expect(
+        points
+            .where((p) => AcupointSearchPanel.matchesEfficacy(p, {'标签A'}))
+            .map((p) => p.id),
+        ['1']);
+    expect(
+        points
+            .where(
+                (p) => AcupointSearchPanel.matchesEfficacy(p, {'标签A', '标签B'}))
+            .map((p) => p.id),
+        ['1', '2']);
   });
 
   testWidgets('无标签数据时显示待录入提示', (tester) async {

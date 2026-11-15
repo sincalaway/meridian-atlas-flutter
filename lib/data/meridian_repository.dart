@@ -38,8 +38,10 @@ class MeridianRepository {
     }).toList(growable: false);
   }
 
-  Future<({List<Meridian> meridians, List<Acupoint> acupoints})> loadAll() async {
-    final results = await Future.wait([loadMeridians(), loadAcupoints(), loadBodyAtlas()]);
+  Future<({List<Meridian> meridians, List<Acupoint> acupoints})>
+      loadAll() async {
+    final results =
+        await Future.wait([loadMeridians(), loadAcupoints(), loadBodyAtlas()]);
     final atlas = results[2] as BodyAtlas;
     BodyAtlas.current = atlas;
     return (

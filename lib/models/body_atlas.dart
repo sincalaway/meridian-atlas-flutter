@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 ///
 /// 位置由 `tool/body_atlas/` 按骨度分寸从解剖标志点推算，属学习示意，非精确体表定位。
 class BodyFigureView {
-  const BodyFigureView({required this.image, required this.width, required this.height});
+  const BodyFigureView(
+      {required this.image, required this.width, required this.height});
 
   final String image;
   final double width;
@@ -32,7 +33,8 @@ class PointPlacement {
     for (final entry in json.entries) {
       if (entry.key == 'view') continue;
       map[entry.key] = (entry.value as List<dynamic>)
-          .map((p) => Offset(((p as List)[0] as num).toDouble(), (p[1] as num).toDouble()))
+          .map((p) => Offset(
+              ((p as List)[0] as num).toDouble(), (p[1] as num).toDouble()))
           .toList(growable: false);
     }
     return PointPlacement(view: json['view'] as String, byFigure: map);
@@ -40,7 +42,8 @@ class PointPlacement {
 }
 
 class BodyAtlas {
-  const BodyAtlas({required this.figures, required this.placements, required this.note});
+  const BodyAtlas(
+      {required this.figures, required this.placements, required this.note});
 
   /// figure -> view -> 底图
   final Map<String, Map<String, BodyFigureView>> figures;
@@ -58,12 +61,17 @@ class BodyAtlas {
     final figures = <String, Map<String, BodyFigureView>>{};
     (json['figures'] as Map<String, dynamic>).forEach((figure, views) {
       figures[figure] = (views as Map<String, dynamic>).map(
-        (view, v) => MapEntry(view, BodyFigureView.fromJson(v as Map<String, dynamic>)),
+        (view, v) =>
+            MapEntry(view, BodyFigureView.fromJson(v as Map<String, dynamic>)),
       );
     });
     final placements = (json['points'] as Map<String, dynamic>).map(
-      (code, v) => MapEntry(code, PointPlacement.fromJson(v as Map<String, dynamic>)),
+      (code, v) =>
+          MapEntry(code, PointPlacement.fromJson(v as Map<String, dynamic>)),
     );
-    return BodyAtlas(figures: figures, placements: placements, note: json['note'] as String? ?? '');
+    return BodyAtlas(
+        figures: figures,
+        placements: placements,
+        note: json['note'] as String? ?? '');
   }
 }

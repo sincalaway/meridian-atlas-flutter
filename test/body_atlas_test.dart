@@ -9,10 +9,13 @@ import 'package:meridian_atlas/models/meridian.dart';
 void main() {
   test('每个穴位在男女底图上都有位置，且在图片范围内', () {
     final atlas = BodyAtlas.fromJson(
-        jsonDecode(File('assets/data/body_positions.json').readAsStringSync()) as Map<String, dynamic>);
-    final points = (jsonDecode(File('assets/data/acupoints.json').readAsStringSync()) as List)
-        .map((row) => Acupoint.fromJson(row as Map<String, dynamic>))
-        .toList();
+        jsonDecode(File('assets/data/body_positions.json').readAsStringSync())
+            as Map<String, dynamic>);
+    final points =
+        (jsonDecode(File('assets/data/acupoints.json').readAsStringSync())
+                as List)
+            .map((row) => Acupoint.fromJson(row as Map<String, dynamic>))
+            .toList();
     final merged = MeridianRepository.applyAtlas(points, atlas);
     for (final p in merged) {
       for (final figure in const ['male', 'female']) {

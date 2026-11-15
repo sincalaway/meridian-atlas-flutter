@@ -4,15 +4,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meridian_atlas/models/meridian.dart';
+import 'package:meridian_atlas/pages/meridian_compare_page.dart';
 import 'package:meridian_atlas/pages/meridian_detail_page.dart';
 
 void main() {
-  final meridians = (jsonDecode(File('assets/data/meridians.json').readAsStringSync()) as List)
-      .map((row) => Meridian.fromJson(row as Map<String, dynamic>))
-      .toList();
-  final acupoints = (jsonDecode(File('assets/data/acupoints.json').readAsStringSync()) as List)
-      .map((row) => Acupoint.fromJson(row as Map<String, dynamic>))
-      .toList();
+  final meridians =
+      (jsonDecode(File('assets/data/meridians.json').readAsStringSync())
+              as List)
+          .map((row) => Meridian.fromJson(row as Map<String, dynamic>))
+          .toList();
+  final acupoints =
+      (jsonDecode(File('assets/data/acupoints.json').readAsStringSync())
+              as List)
+          .map((row) => Acupoint.fromJson(row as Map<String, dynamic>))
+          .toList();
 
   testWidgets('经络详情页展示说明与相关穴位，点选穴位返回结果', (tester) async {
     final li = meridians.firstWhere((m) => m.id == 'LI');
@@ -21,8 +26,10 @@ void main() {
       home: Builder(
         builder: (context) => TextButton(
           onPressed: () async {
-            picked = await Navigator.of(context).push<Acupoint>(MaterialPageRoute(
-              builder: (_) => MeridianDetailPage(meridian: li, acupoints: acupoints, favoriteIds: const {}),
+            picked =
+                await Navigator.of(context).push<Acupoint>(MaterialPageRoute(
+              builder: (_) => MeridianDetailPage(
+                  meridian: li, acupoints: acupoints, favoriteIds: const {}),
             ));
           },
           child: const Text('open'),
@@ -42,10 +49,32 @@ void main() {
     expect(picked?.code, 'LI4');
   });
 
+  testWidgets('详情页可进入双经络对比', (tester) async {
+    final li = meridians.firstWhere((m) => m.id == 'LI');
+    await tester.pumpWidget(MaterialApp(
+      home: MeridianDetailPage(
+        meridian: li,
+        meridians: meridians,
+        acupoints: acupoints,
+        favoriteIds: const {},
+      ),
+    ));
+    await tester.pump();
+    final compareAction = find.text('与其他经络对比');
+    await tester.scrollUntilVisible(compareAction, 200);
+    await tester.tap(compareAction);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(MeridianComparePage), findsOneWidget);
+    expect(find.text('属性对照'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('每条经络的详情页都能渲染', (tester) async {
     for (final meridian in meridians) {
       await tester.pumpWidget(MaterialApp(
-        home: MeridianDetailPage(meridian: meridian, acupoints: acupoints, favoriteIds: const {}),
+        home: MeridianDetailPage(
+            meridian: meridian, acupoints: acupoints, favoriteIds: const {}),
       ));
       await tester.pump();
       expect(tester.takeException(), isNull, reason: meridian.id);

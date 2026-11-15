@@ -49,7 +49,8 @@ class Meridian {
   final String source;
 
   Color get color {
-    final value = int.tryParse(colorHex.replaceFirst('#', ''), radix: 16) ?? 0xFF76C7C0;
+    final value =
+        int.tryParse(colorHex.replaceFirst('#', ''), radix: 16) ?? 0xFF76C7C0;
     return Color(0xFF000000 | value);
   }
 
@@ -119,7 +120,9 @@ class Acupoint {
 
   List<Offset> positionsFor(String figure) => placements[figure] ?? const [];
 
-  Acupoint withPlacement(String newView, Map<String, List<Offset>> newPlacements) => Acupoint(
+  Acupoint withPlacement(
+          String newView, Map<String, List<Offset>> newPlacements) =>
+      Acupoint(
         id: id,
         nameZh: nameZh,
         pinyin: pinyin,
@@ -149,9 +152,13 @@ class Acupoint {
       x: (coordinate['x'] as num).toDouble(),
       y: (coordinate['y'] as num).toDouble(),
       location: json['location'] as String? ?? '',
-      indications: (json['indications'] as List<dynamic>? ?? const []).cast<String>(),
-      efficacyTags: (json['efficacyTags'] as List<dynamic>? ?? const []).cast<String>(),
-      specialCategories: (json['specialCategories'] as List<dynamic>? ?? const []).cast<String>(),
+      indications:
+          (json['indications'] as List<dynamic>? ?? const []).cast<String>(),
+      efficacyTags:
+          (json['efficacyTags'] as List<dynamic>? ?? const []).cast<String>(),
+      specialCategories:
+          (json['specialCategories'] as List<dynamic>? ?? const [])
+              .cast<String>(),
       cautions: json['cautions'] as String? ?? '',
       source: json['source'] as String? ?? '',
     );

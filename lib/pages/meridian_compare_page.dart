@@ -27,21 +27,36 @@ class MeridianComparePage extends StatefulWidget {
   static List<(String, String, String)> comparisonRows(
     Meridian a,
     Meridian b,
-    List<Acupoint> acupoints,
-  ) {
-    String group(Meridian m) => switch (m.group) { 'hand' => '手经', 'foot' => '足经', _ => '奇经' };
+    List<Acupoint> acupoints, {
+    String figure = 'male',
+  }) {
+    String group(Meridian m) =>
+        switch (m.group) { 'hand' => '手经', 'foot' => '足经', _ => '奇经' };
     String views(Meridian m) {
-      final set = acupoints.where((p) => p.meridianId == m.id).map((p) => p.view).toSet();
-      return [if (set.contains('front')) '正面', if (set.contains('back')) '背面'].join(' / ');
+      final set = <String>{
+        ...acupoints.where((p) => p.meridianId == m.id).map((p) => p.view),
+        ...m.routes
+            .where((route) => route.points.length > 1)
+            .map((route) => route.view),
+      };
+      return [if (set.contains('front')) '正面', if (set.contains('back')) '背面']
+          .join(' / ');
     }
-    String pointCount(Meridian m) => '${acupoints.where((p) => p.meridianId == m.id).length}';
+
+    String pointCount(Meridian m) =>
+        '${acupoints.where((p) => p.meridianId == m.id).length}';
+    String locatedCount(Meridian m) =>
+        '${acupoints.where((p) => p.meridianId == m.id && p.positionsFor(figure).isNotEmpty).length}';
+    String order(Meridian m) => m.direction == 'reverse' ? '穴序逆序' : '穴序顺序';
     return [
       ('国际代码', a.code, b.code),
       ('拼音', a.pinyin, b.pinyin),
       ('手足分类', group(a), group(b)),
       ('阴阳', a.yinYang, b.yinYang),
-      ('穴位所在面', views(a), views(b)),
-      ('已收录穴位', pointCount(a), pointCount(b)),
+      ('路径所在面', views(a), views(b)),
+      ('穴位资料记录', pointCount(a), pointCount(b)),
+      ('当前底图可定位', locatedCount(a), locatedCount(b)),
+      ('动画基准（数据顺序）', order(a), order(b)),
     ];
   }
 
@@ -63,14 +78,20 @@ class _MeridianComparePageState extends State<MeridianComparePage>
   void initState() {
     super.initState();
     final ids = widget.meridians.map((m) => m.id).toList();
-    _leftId = (widget.initialLeftId != null && ids.contains(widget.initialLeftId))
-        ? widget.initialLeftId!
-        : ids.first;
+    _leftId = ids.isEmpty
+        ? ''
+        : (widget.initialLeftId != null && ids.contains(widget.initialLeftId))
+            ? widget.initialLeftId!
+            : ids.first;
     final rightCandidate = widget.initialRightId;
-    _rightId = (rightCandidate != null && ids.contains(rightCandidate) && rightCandidate != _leftId)
-        ? rightCandidate
-        : ids.firstWhere((id) => id != _leftId, orElse: () => _leftId);
-    _view = _preferredView();
+    _rightId = ids.length < 2
+        ? _leftId
+        : (rightCandidate != null &&
+                ids.contains(rightCandidate) &&
+                rightCandidate != _leftId)
+            ? rightCandidate
+            : ids.firstWhere((id) => id != _leftId, orElse: () => _leftId);
+    _view = ids.length < 2 ? 'front' : _preferredView();
     _flowController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 4200),
@@ -88,10 +109,22 @@ class _MeridianComparePageState extends State<MeridianComparePage>
   Meridian get _right => _byId(_rightId);
 
   bool hasView(Meridian meridian, String view) =>
-      widget.acupoints.any((p) => p.meridianId == meridian.id && p.view == view);
+      meridian.routes
+          .any((route) => route.view == view && route.points.length > 1) ||
+      widget.acupoints.any((p) =>
+          p.meridianId == meridian.id &&
+          p.view == view &&
+          p.positionsFor(widget.figure).isNotEmpty);
+
+  bool hasPositionedPoints(Meridian meridian, String view) =>
+      widget.acupoints.any((p) =>
+          p.meridianId == meridian.id &&
+          p.view == view &&
+          p.positionsFor(widget.figure).isNotEmpty);
 
   /// 优先选两条经络都有路径的视图，其次选任一有路径的视图。
   String _preferredView() {
+    if (widget.meridians.length < 2) return 'front';
     for (final view in const ['front', 'back']) {
       if (hasView(_left, view) && hasView(_right, view)) return view;
     }
@@ -118,7 +151,8 @@ class _MeridianComparePageState extends State<MeridianComparePage>
         if (id == _leftId) _leftId = _rightId;
         _rightId = id;
       }
-      if (!hasView(_left, _view) && !hasView(_right, _view)) _view = _preferredView();
+      if (!hasView(_left, _view) && !hasView(_right, _view))
+        _view = _preferredView();
     });
   }
 
@@ -143,10 +177,22 @@ class _MeridianComparePageState extends State<MeridianComparePage>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.meridians.length < 2) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('经络对比')),
+        body: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text('至少需要两条经络数据才能进行对比。', textAlign: TextAlign.center),
+          ),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: const Text('经络对比', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+        title: const Text('经络对比',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
       ),
       body: SafeArea(
         top: false,
@@ -157,17 +203,24 @@ class _MeridianComparePageState extends State<MeridianComparePage>
             const SizedBox(height: 14),
             _buildToolbar(),
             const SizedBox(height: 12),
-            _layout == CompareLayout.sideBySide ? _buildSideBySide() : _buildOverlay(),
+            _layout == CompareLayout.sideBySide
+                ? _buildSideBySide()
+                : _buildOverlay(),
             const SizedBox(height: 8),
-            const Align(alignment: Alignment.centerLeft, child: MeridianLineLegend()),
+            const Align(
+                alignment: Alignment.centerLeft, child: MeridianLineLegend()),
             const SizedBox(height: 22),
-            const Text('属性对照', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+            const Text('属性对照',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
             const SizedBox(height: 10),
             _buildComparisonTable(),
             const SizedBox(height: 16),
             Text(
-              '路径与穴位为界面演示数据，尚未完成教材校勘，仅供学习参考。',
-              style: TextStyle(fontSize: 10, height: 1.5, color: Colors.white.withOpacity(0.4)),
+              '路径和穴位位置均为学习示意数据，尚未完成教材校勘；动画按数据顺序播放，不代表生理流向。当前底图无定位时会显示预置示意线路。',
+              style: TextStyle(
+                  fontSize: 10,
+                  height: 1.5,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ],
         ),
@@ -207,10 +260,12 @@ class _MeridianComparePageState extends State<MeridianComparePage>
           child: Container(
             width: 10,
             height: 10,
-            decoration: BoxDecoration(color: current.color, shape: BoxShape.circle),
+            decoration:
+                BoxDecoration(color: current.color, shape: BoxShape.circle),
           ),
         ),
-        prefixIconConstraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+        prefixIconConstraints:
+            const BoxConstraints(minWidth: 36, minHeight: 36),
         filled: true,
         fillColor: const Color(0xFF121D20),
         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -223,7 +278,8 @@ class _MeridianComparePageState extends State<MeridianComparePage>
       items: widget.meridians
           .map((m) => DropdownMenuItem(
                 value: m.id,
-                child: Text('${m.nameZh} ${m.code}', overflow: TextOverflow.ellipsis),
+                child: Text('${m.nameZh} ${m.code}',
+                    overflow: TextOverflow.ellipsis),
               ))
           .toList(),
       onChanged: (value) {
@@ -250,16 +306,23 @@ class _MeridianComparePageState extends State<MeridianComparePage>
           tooltip: _layout == CompareLayout.sideBySide ? '叠加显示' : '并排显示',
           onPressed: () {
             HapticFeedback.selectionClick();
-            setState(() => _layout =
-                _layout == CompareLayout.sideBySide ? CompareLayout.overlay : CompareLayout.sideBySide);
+            setState(() => _layout = _layout == CompareLayout.sideBySide
+                ? CompareLayout.overlay
+                : CompareLayout.sideBySide);
           },
-          icon: Icon(_layout == CompareLayout.sideBySide ? Icons.layers_outlined : Icons.view_column_outlined),
+          icon: Icon(_layout == CompareLayout.sideBySide
+              ? Icons.layers_outlined
+              : Icons.view_column_outlined),
           color: const Color(0xFFB6C8C2),
         ),
         IconButton(
           tooltip: _showPoints ? '隐藏穴位' : '显示穴位',
           onPressed: () => setState(() => _showPoints = !_showPoints),
-          icon: Icon(_showPoints ? Icons.radio_button_checked : Icons.radio_button_unchecked, size: 20),
+          icon: Icon(
+              _showPoints
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              size: 20),
           color: const Color(0xFFB6C8C2),
         ),
         IconButton.filled(
@@ -275,8 +338,15 @@ class _MeridianComparePageState extends State<MeridianComparePage>
     );
   }
 
-  Widget _canvasFrame({required List<Meridian> meridians, required Color border, required double height, String? caption}) {
+  Widget _canvasFrame(
+      {required List<Meridian> meridians,
+      required Color border,
+      required double height,
+      String? caption}) {
     final visible = meridians.where((m) => hasView(m, _view)).toList();
+    final fallbackOnly = meridians
+        .where((m) => hasView(m, _view) && !hasPositionedPoints(m, _view))
+        .toList();
     return Container(
       height: height,
       clipBehavior: Clip.antiAlias,
@@ -303,11 +373,27 @@ class _MeridianComparePageState extends State<MeridianComparePage>
               activePointId: null,
             ),
           ),
+          if (fallbackOnly.isNotEmpty)
+            Positioned(
+              left: 10,
+              right: 10,
+              bottom: 10,
+              child: Text(
+                '${fallbackOnly.map((m) => m.nameZh).join('、')}：预置示意路线，无当前底图穴位定位',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10, color: Colors.white.withOpacity(0.58)),
+              ),
+            ),
           if (caption != null)
             Positioned(
               left: 10,
               top: 10,
-              child: Text(caption, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFFD0DDD7))),
+              child: Text(caption,
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFD0DDD7))),
             ),
           if (visible.length < meridians.length)
             Positioned(
@@ -317,7 +403,8 @@ class _MeridianComparePageState extends State<MeridianComparePage>
               child: Text(
                 '${meridians.where((m) => !hasView(m, _view)).map((m) => m.nameZh).join('、')}在此面无穴位',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.5)),
+                style: TextStyle(
+                    fontSize: 10, color: Colors.white.withOpacity(0.5)),
               ),
             ),
         ],
@@ -352,7 +439,10 @@ class _MeridianComparePageState extends State<MeridianComparePage>
   Widget _buildOverlay() {
     return Column(
       children: [
-        _canvasFrame(meridians: [_left, _right], border: const Color(0xFF26383A), height: 380),
+        _canvasFrame(
+            meridians: [_left, _right],
+            border: const Color(0xFF26383A),
+            height: 380),
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -372,14 +462,18 @@ class _MeridianComparePageState extends State<MeridianComparePage>
       children: [
         Container(width: 14, height: 3, color: meridian.color),
         const SizedBox(width: 6),
-        Text(meridian.nameZh, style: const TextStyle(fontSize: 11, color: Color(0xFFBFCDC7))),
+        Text(meridian.nameZh,
+            style: const TextStyle(fontSize: 11, color: Color(0xFFBFCDC7))),
       ],
     );
   }
 
   Widget _buildComparisonTable() {
-    final rows = MeridianComparePage.comparisonRows(_left, _right, widget.acupoints);
-    TextStyle head(Color c) => TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: c);
+    final rows = MeridianComparePage.comparisonRows(
+        _left, _right, widget.acupoints,
+        figure: widget.figure);
+    TextStyle head(Color c) =>
+        TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: c);
     const label = TextStyle(fontSize: 11, color: Color(0xFF8EA39C));
     const cell = TextStyle(fontSize: 12, color: Color(0xFFD5E2DD));
     return Container(
@@ -390,7 +484,11 @@ class _MeridianComparePageState extends State<MeridianComparePage>
         border: Border.all(color: const Color(0xFF223236)),
       ),
       child: Table(
-        columnWidths: const {0: FlexColumnWidth(1.1), 1: FlexColumnWidth(1.4), 2: FlexColumnWidth(1.4)},
+        columnWidths: const {
+          0: FlexColumnWidth(1.1),
+          1: FlexColumnWidth(1.4),
+          2: FlexColumnWidth(1.4)
+        },
         defaultVerticalAlignment: TableCellVerticalAlignment.middle,
         children: [
           TableRow(children: [
@@ -401,11 +499,17 @@ class _MeridianComparePageState extends State<MeridianComparePage>
           ...rows.map((row) {
             final same = row.$2 == row.$3;
             return TableRow(
-              decoration: const BoxDecoration(border: Border(top: BorderSide(color: Color(0xFF1E2C2F)))),
+              decoration: const BoxDecoration(
+                  border: Border(top: BorderSide(color: Color(0xFF1E2C2F)))),
               children: [
-                Padding(padding: const EdgeInsets.symmetric(vertical: 9), child: Text(row.$1, style: label)),
+                Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 9),
+                    child: Text(row.$1, style: label)),
                 Text(row.$2, style: cell),
-                Text(row.$3, style: same ? cell : cell.copyWith(color: const Color(0xFFE8D58F))),
+                Text(row.$3,
+                    style: same
+                        ? cell
+                        : cell.copyWith(color: const Color(0xFFE8D58F))),
               ],
             );
           }),
