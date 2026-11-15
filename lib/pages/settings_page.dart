@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../theme/atlas_theme.dart';
 
@@ -76,6 +77,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     selected: {_themeMode},
                     showSelectedIcon: false,
                     onSelectionChanged: (selection) {
+                      HapticFeedback.selectionClick();
                       final value = selection.first;
                       setState(() => _themeMode = value);
                       widget.onThemeModeChanged(value);
@@ -112,6 +114,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     selected: {_figure},
                     showSelectedIcon: false,
                     onSelectionChanged: (selection) {
+                      HapticFeedback.selectionClick();
                       final value = selection.first;
                       setState(() => _figure = value);
                       widget.onFigureChanged(value);
@@ -134,6 +137,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     selected: {_view},
                     showSelectedIcon: false,
                     onSelectionChanged: (selection) {
+                      HapticFeedback.selectionClick();
                       final value = selection.first;
                       setState(() => _view = value);
                       widget.onViewChanged(value);
@@ -154,6 +158,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   style: TextStyle(color: palette.textMuted)),
               value: _animationsEnabled,
               onChanged: (value) {
+                HapticFeedback.selectionClick();
                 setState(() => _animationsEnabled = value);
                 widget.onAnimationsChanged(value);
               },
@@ -171,7 +176,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   style: TextStyle(color: palette.textMuted)),
               trailing:
                   Icon(Icons.chevron_right_rounded, color: palette.textMuted),
-              onTap: widget.onReplayGuide,
+              onTap: () {
+                HapticFeedback.selectionClick();
+                widget.onReplayGuide();
+              },
             ),
           ),
           const SizedBox(height: 18),

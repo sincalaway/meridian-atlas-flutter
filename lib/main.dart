@@ -240,11 +240,13 @@ class _MeridianHomePageState extends State<MeridianHomePage>
   }
 
   void _changeFigure(String figure) {
+    HapticFeedback.selectionClick();
     setState(() => _figure = figure);
     unawaited(_saveStudyPreferences(figure: figure));
   }
 
   void _changeView(String view) {
+    HapticFeedback.selectionClick();
     setState(() {
       _view = view;
       _activePoint = null;
@@ -253,6 +255,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
   }
 
   void _changeAnimationPreference(bool enabled) {
+    HapticFeedback.selectionClick();
     setState(() => _playing = enabled);
     if (enabled) {
       _flowController.repeat();
@@ -380,6 +383,16 @@ class _MeridianHomePageState extends State<MeridianHomePage>
     }
   }
 
+  void _toggleReverse() {
+    HapticFeedback.selectionClick();
+    setState(() => _reverse = !_reverse);
+  }
+
+  void _toggleShowPoints() {
+    HapticFeedback.selectionClick();
+    setState(() => _showPoints = !_showPoints);
+  }
+
   void _resetAnimation() {
     HapticFeedback.selectionClick();
     _flowController.value = 0;
@@ -441,83 +454,137 @@ class _MeridianHomePageState extends State<MeridianHomePage>
     final palette = context.atlas;
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(18, 12, 18, 28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 26),
-              const Text(
-                '探索人体经络',
-                style: TextStyle(
-                    fontSize: 27,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.6),
+        child: LayoutBuilder(builder: (context, constraints) {
+          final landscape = constraints.maxWidth >= 720 &&
+              constraints.maxWidth > constraints.maxHeight;
+          if (landscape) {
+            return Padding(
+              key: const Key('atlas_landscape_layout'),
+              padding: const EdgeInsets.fromLTRB(18, 12, 18, 16),
+              child: Column(
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          flex: 6,
+                          child: SingleChildScrollView(
+                            child: _buildCanvasSection(selected, palette),
+                          ),
+                        ),
+                        const SizedBox(width: 18),
+                        Expanded(
+                          flex: 5,
+                          child: SingleChildScrollView(
+                            child: _buildExploreSection(selected),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 6),
-              Text(
-                '点选经络与穴位，查看标准化示意路径',
-                style: TextStyle(fontSize: 14, color: palette.textSecondary),
-              ),
-              const SizedBox(height: 18),
-              _buildViewPicker(),
-              const SizedBox(height: 12),
-              _buildCanvas(selected),
-              const SizedBox(height: 14),
-              _buildAnimationControls(),
-              const SizedBox(height: 24),
-              _buildSectionHeading('搜索穴位',
-                  trailing: '${widget.acupoints.length} 个穴位'),
-              const SizedBox(height: 12),
-              AcupointSearchPanel(
-                points: widget.acupoints,
-                meridians: widget.meridians,
-                controller: _pointSearchController,
-                query: _pointSearchQuery,
-                onQueryChanged: (value) =>
-                    setState(() => _pointSearchQuery = value),
-                selectedMeridianId: _pointMeridianFilter,
-                onMeridianChanged: (value) =>
-                    setState(() => _pointMeridianFilter = value),
-                favoritesOnly: _favoritesOnly,
-                onFavoritesOnlyChanged: (value) =>
-                    setState(() => _favoritesOnly = value),
-                favoriteIds: _favoritePointIds,
-                favoritesReady: _favoritesReady,
-                onFavoriteToggle: _toggleFavorite,
-                onPointSelected: _selectSearchResult,
-                selectedEfficacyTags: _efficacyFilter,
-                onEfficacyTagToggled: (tag) {
-                  HapticFeedback.selectionClick();
-                  setState(() {
-                    if (!_efficacyFilter.add(tag)) _efficacyFilter.remove(tag);
-                  });
-                },
-                onEfficacyTagsCleared: () => setState(_efficacyFilter.clear),
-              ),
-              const SizedBox(height: 24),
-              _buildSectionHeading('选择经络',
-                  trailing: '${_selectedIds.length} 条已叠加'),
-              const SizedBox(height: 12),
-              _buildGroupPicker(),
-              const SizedBox(height: 12),
-              _buildMeridianChips(),
-              if (selected.isNotEmpty) ...[
-                const SizedBox(height: 14),
-                _buildDetailShortcuts(selected),
+            );
+          }
+          return SingleChildScrollView(
+            key: const Key('atlas_portrait_layout'),
+            padding: const EdgeInsets.fromLTRB(18, 12, 18, 28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 26),
+                _buildCanvasSection(selected, palette),
+                const SizedBox(height: 24),
+                _buildExploreSection(selected),
               ],
-              const SizedBox(height: 16),
-              if (_activePoint != null) _buildPointCard(_activePoint!),
-              if (_activePoint == null) _buildHintCard(),
-              const SizedBox(height: 14),
-              _buildDisclaimer(),
-            ],
-          ),
-        ),
+            ),
+          );
+        }),
       ),
     );
   }
+
+  Widget _buildCanvasSection(List<Meridian> selected, AtlasPalette palette) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '探索人体经络',
+            style: TextStyle(
+                fontSize: 27, fontWeight: FontWeight.w700, letterSpacing: -0.6),
+          ),
+          const SizedBox(height: 6),
+          Text('点选经络与穴位，查看标准化示意路径',
+              style: TextStyle(fontSize: 14, color: palette.textSecondary)),
+          const SizedBox(height: 18),
+          _buildViewPicker(),
+          const SizedBox(height: 12),
+          _buildCanvas(selected),
+          const SizedBox(height: 14),
+          _buildAnimationControls(),
+        ],
+      );
+
+  Widget _buildExploreSection(List<Meridian> selected) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeading('搜索穴位',
+              trailing: '${widget.acupoints.length} 个穴位'),
+          const SizedBox(height: 12),
+          AcupointSearchPanel(
+            points: widget.acupoints,
+            meridians: widget.meridians,
+            controller: _pointSearchController,
+            query: _pointSearchQuery,
+            onQueryChanged: (value) =>
+                setState(() => _pointSearchQuery = value),
+            selectedMeridianId: _pointMeridianFilter,
+            onMeridianChanged: (value) {
+              HapticFeedback.selectionClick();
+              setState(() => _pointMeridianFilter = value);
+            },
+            favoritesOnly: _favoritesOnly,
+            onFavoritesOnlyChanged: (value) {
+              HapticFeedback.selectionClick();
+              setState(() => _favoritesOnly = value);
+            },
+            favoriteIds: _favoritePointIds,
+            favoritesReady: _favoritesReady,
+            onFavoriteToggle: _toggleFavorite,
+            onPointSelected: _selectSearchResult,
+            selectedEfficacyTags: _efficacyFilter,
+            onEfficacyTagToggled: (tag) {
+              HapticFeedback.selectionClick();
+              setState(() {
+                if (!_efficacyFilter.add(tag)) _efficacyFilter.remove(tag);
+              });
+            },
+            onEfficacyTagsCleared: () {
+              HapticFeedback.selectionClick();
+              setState(_efficacyFilter.clear);
+            },
+          ),
+          const SizedBox(height: 24),
+          _buildSectionHeading('选择经络', trailing: '${_selectedIds.length} 条已叠加'),
+          const SizedBox(height: 12),
+          _buildGroupPicker(),
+          const SizedBox(height: 12),
+          _buildMeridianChips(),
+          if (selected.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            _buildDetailShortcuts(selected),
+          ],
+          const SizedBox(height: 16),
+          if (_activePoint != null) _buildPointCard(_activePoint!),
+          if (_activePoint == null) _buildHintCard(),
+          const SizedBox(height: 14),
+          _buildDisclaimer(),
+        ],
+      );
 
   Widget _buildHeader() {
     final palette = context.atlas;
@@ -593,7 +660,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
             onTap: () => _changeFigure('female')),
         const Spacer(),
         TextButton.icon(
-          onPressed: () => setState(() => _showPoints = !_showPoints),
+          onPressed: _toggleShowPoints,
           icon: Icon(
               _showPoints
                   ? Icons.radio_button_checked
@@ -610,7 +677,9 @@ class _MeridianHomePageState extends State<MeridianHomePage>
   }
 
   Widget _buildCanvas(List<Meridian> selected) {
-    final height = math.min(640.0, MediaQuery.sizeOf(context).height * 0.68);
+    final screen = MediaQuery.sizeOf(context);
+    final landscape = screen.width > screen.height;
+    final height = math.min(640.0, screen.height * (landscape ? 0.76 : 0.68));
     return Container(
       height: height,
       clipBehavior: Clip.antiAlias,
@@ -663,7 +732,7 @@ class _MeridianHomePageState extends State<MeridianHomePage>
             right: 12,
             top: 12,
             child: IconButton.filledTonal(
-              onPressed: () => setState(() => _reverse = !_reverse),
+              onPressed: _toggleReverse,
               tooltip: '切换流动方向',
               icon: Icon(
                   _reverse ? Icons.swap_horiz_rounded : Icons.swap_vert_rounded,
@@ -798,7 +867,10 @@ class _MeridianHomePageState extends State<MeridianHomePage>
             child: ChoiceChip(
               label: Text(option.$2),
               selected: selected,
-              onSelected: (_) => setState(() => _group = option.$1),
+              onSelected: (_) {
+                HapticFeedback.selectionClick();
+                setState(() => _group = option.$1);
+              },
               labelStyle: TextStyle(
                   fontSize: 12,
                   color: selected ? palette.accent : palette.textSecondary),
@@ -945,7 +1017,10 @@ class _MeridianHomePageState extends State<MeridianHomePage>
                 ),
               ),
               IconButton(
-                onPressed: () => setState(() => _activePoint = null),
+                onPressed: () {
+                  HapticFeedback.selectionClick();
+                  setState(() => _activePoint = null);
+                },
                 icon: const Icon(Icons.close_rounded, size: 18),
                 visualDensity: VisualDensity.compact,
               ),
@@ -1233,13 +1308,17 @@ class _FullscreenAtlasPageState extends State<_FullscreenAtlasPage> {
             style: const TextStyle(fontSize: 15)),
         actions: [
           TextButton(
-            onPressed: () =>
-                setState(() => _view = _view == 'front' ? 'back' : 'front'),
+            onPressed: () {
+              HapticFeedback.selectionClick();
+              setState(() => _view = _view == 'front' ? 'back' : 'front');
+            },
             child: Text(_view == 'front' ? '看背面' : '看正面'),
           ),
           TextButton(
-            onPressed: () =>
-                setState(() => _figure = _figure == 'male' ? 'female' : 'male'),
+            onPressed: () {
+              HapticFeedback.selectionClick();
+              setState(() => _figure = _figure == 'male' ? 'female' : 'male');
+            },
             child: Text(_figure == 'male' ? '换女性' : '换男性'),
           ),
         ],
